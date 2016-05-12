@@ -19,7 +19,7 @@ std::vector<cv::Rect> NatNat::detectFaces(void* imgRGB, int w, int h, int stride
 {
 	cv::Mat imgGray = grayImage(imgRGB, w, h, stride);
 	std::vector<cv::Rect> faceRectsBuf;
-	cascade.detectMultiScale(imgGray, faceRectsBuf);
+	cascade.detectMultiScale(imgGray, faceRectsBuf, 1.1, 3, 0, cv::Size(96, 96), cv::Size());
 	return faceRectsBuf;
 }
 
