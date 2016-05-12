@@ -18,8 +18,9 @@ namespace Pam
     {
 
         private delegate void Proc();
-        Nat nat = new Nat();
+        private Nat nat = new Nat();
         private VSourceDlg vSourceDlg = new VSourceDlg();
+        private Bitmap img = new Bitmap("sombrero.png");
         private bool playing = false;
         private bool mirror = false;
 
@@ -93,7 +94,14 @@ namespace Pam
                 {
                     using (Graphics g = Graphics.FromImage(image))
                     {
-                        g.DrawRectangles(Pens.AliceBlue, faces);
+                        //g.DrawRectangles(Pens.AliceBlue, faces);
+                        foreach(Rectangle face in faces)
+                        {
+                            float s = (float)face.Width / img.Width;
+                            Size img_s = new Size((int)(img.Width * s), (int)(img.Height * s));
+                            Point img_p = new Point(face.X, face.Y - img_s.Height);
+                            g.DrawImage(img, new Rectangle(img_p, img_s));
+                        }
                     }
                 }   
             }
