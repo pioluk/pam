@@ -6,6 +6,9 @@
 
 #include "NatNat.h"
 
+#include <algorithm>
+#include <iterator>
+
 #include <opencv2/imgproc/imgproc.hpp>
 
 HMODULE g_hThisDll = NULL;
@@ -17,13 +20,19 @@ BOOL WINAPI DllMain(HINSTANCE hDll, DWORD dwReason, LPVOID reserved)
 	return TRUE;
 }
 
-std::vector<cv::Rect> NatNat::detectFaces(void* imgRGB, int w, int h, int stride, std::vector<cv::Rect>& retEyes)
+std::vector<cv::Rect> NatNat::detectFaces(void * imgRGB, int w, int h, int stride, std::vector<cv::Rect>& retEyes, std::vector<cv::Rect>& retFaceEyes)
 {
 	cv::Mat imgGray = grayImage(imgRGB, w, h, stride);
 	cv::equalizeHist(imgGray, imgGray);
 	std::vector<cv::Rect> faceRectsBuf;
 	cscFace.detectMultiScale(imgGray, faceRectsBuf, 1.1, 3, 0, cv::Size(96, 96), cv::Size());
 	cscEye.detectMultiScale(imgGray, retEyes);
+	for (const cv::Rect& face : faceRectsBuf)
+	{
+		std::vector<cv::Rect> fe;
+		cscEye.detectMultiScale(imgGray(face), fe);
+		std::transform(fe.cbegin(), fe.cend(), std::back_inserter(retFaceEyes), [&face](const cv::Rect& eye) { return eye + face.tl(); });
+	}
 	return faceRectsBuf;
 }
 

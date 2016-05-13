@@ -24,6 +24,6 @@ namespace NatLib
 		Nat() { natNat = new NatNat; }
 		~Nat() { destruct(); }
 		!Nat() { destruct(); }
-		array<Drawing::Rectangle>^ detectFaces(void* imgRGB, int w, int h, int stride, [Out]array<Drawing::Rectangle>^% retEyes);
+		array<Drawing::Rectangle>^ detectFaces(void* imgRGB, int w, int h, int stride, [Out]array<Drawing::Rectangle>^% retEyes, [Out]array<Drawing::Rectangle>^% retFaceEyes);
 	};
 }

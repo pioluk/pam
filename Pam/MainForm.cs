@@ -89,14 +89,16 @@ namespace Pam
         {
             try
             {
-                Rectangle[] eyes;
-                Rectangle[] faces = DetectFaces(image, out eyes);
+                Rectangle[] eyes, faceEyes;
+                Rectangle[] faces = DetectFaces(image, out eyes, out faceEyes);
                 using (Graphics g = Graphics.FromImage(image))
                 {
                     if (faces != null && faces.Length > 0)
                         g.DrawRectangles(Pens.AliceBlue, faces);
                     if (eyes != null && eyes.Length > 0)
                         g.DrawRectangles(Pens.BlueViolet, eyes);
+                    if (faceEyes != null && faceEyes.Length > 0)
+                        g.DrawRectangles(Pens.DarkRed, faceEyes);
                 }
             }
             catch(Exception) { }
@@ -104,12 +106,12 @@ namespace Pam
                 image.RotateFlip(RotateFlipType.RotateNoneFlipX);
         }
 
-        private unsafe Rectangle[] DetectFaces(Bitmap frame, out Rectangle[] retEyes)
+        private unsafe Rectangle[] DetectFaces(Bitmap frame, out Rectangle[] retEyes, out Rectangle[] retFaceEyes)
         {
             BitmapData data = frame.LockBits(new Rectangle(Point.Empty, frame.Size), ImageLockMode.ReadOnly, PixelFormat.Format24bppRgb);
             try
             {
-                return nat.detectFaces(data.Scan0.ToPointer(), data.Width, data.Height, data.Stride, out retEyes);
+                return nat.detectFaces(data.Scan0.ToPointer(), data.Width, data.Height, data.Stride, out retEyes, out retFaceEyes);
             }
             finally
             {

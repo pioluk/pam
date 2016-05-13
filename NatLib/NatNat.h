@@ -16,7 +16,7 @@ public:
 		cscFace.load("haarcascades\\haarcascade_frontalface_default.xml");
 		cscEye.load("haarcascades\\haarcascade_eye.xml");
 	}
-	std::vector<cv::Rect> detectFaces(void* imgRGB, int w, int h, int stride, std::vector<cv::Rect>& retEyes);
+	std::vector<cv::Rect> detectFaces(void* imgRGB, int w, int h, int stride, std::vector<cv::Rect>& retEyes, std::vector<cv::Rect>& retFaceEyes);
 	cv::Mat grayImage(void* imgRGB, int w, int h, int stride);
 };
 
