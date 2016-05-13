@@ -17,12 +17,13 @@ BOOL WINAPI DllMain(HINSTANCE hDll, DWORD dwReason, LPVOID reserved)
 	return TRUE;
 }
 
-std::vector<cv::Rect> NatNat::detectFaces(void* imgRGB, int w, int h, int stride)
+std::vector<cv::Rect> NatNat::detectFaces(void* imgRGB, int w, int h, int stride, std::vector<cv::Rect>& retEyes)
 {
 	cv::Mat imgGray = grayImage(imgRGB, w, h, stride);
 	cv::equalizeHist(imgGray, imgGray);
 	std::vector<cv::Rect> faceRectsBuf;
-	cascade.detectMultiScale(imgGray, faceRectsBuf, 1.1, 3, 0, cv::Size(96, 96), cv::Size());
+	cscFace.detectMultiScale(imgGray, faceRectsBuf, 1.1, 3, 0, cv::Size(96, 96), cv::Size());
+	cscEye.detectMultiScale(imgGray, retEyes);
 	return faceRectsBuf;
 }
 

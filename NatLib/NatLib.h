@@ -5,6 +5,7 @@
 #include "NatNat.h"
 
 using namespace System;
+using namespace System::Runtime::InteropServices;
 
 namespace NatLib
 {
@@ -23,6 +24,6 @@ namespace NatLib
 		Nat() { natNat = new NatNat; }
 		~Nat() { destruct(); }
 		!Nat() { destruct(); }
-		array<System::Drawing::Rectangle>^ detectFaces(void* imgRGB, int w, int h, int stride);
+		array<Drawing::Rectangle>^ detectFaces(void* imgRGB, int w, int h, int stride, [Out]array<Drawing::Rectangle>^% retEyes);
 	};
 }

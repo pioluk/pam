@@ -8,13 +8,15 @@
 
 class NatNat
 {
-	cv::CascadeClassifier cascade;
+	cv::CascadeClassifier cscFace;
+	cv::CascadeClassifier cscEye;
 public:
 	NatNat()
 	{
-		cascade.load("haarcascades\\haarcascade_frontalface_default.xml");
+		cscFace.load("haarcascades\\haarcascade_frontalface_default.xml");
+		cscEye.load("haarcascades\\haarcascade_eye.xml");
 	}
-	std::vector<cv::Rect> detectFaces(void* imgRGB, int w, int h, int stride);
+	std::vector<cv::Rect> detectFaces(void* imgRGB, int w, int h, int stride, std::vector<cv::Rect>& retEyes);
 	cv::Mat grayImage(void* imgRGB, int w, int h, int stride);
 };
 

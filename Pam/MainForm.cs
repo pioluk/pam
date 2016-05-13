@@ -89,33 +89,27 @@ namespace Pam
         {
             try
             {
-                Rectangle[] faces = DetectFaces(image);
-                if (faces != null && faces.Length > 0)
+                Rectangle[] eyes;
+                Rectangle[] faces = DetectFaces(image, out eyes);
+                using (Graphics g = Graphics.FromImage(image))
                 {
-                    using (Graphics g = Graphics.FromImage(image))
-                    {
-                        //g.DrawRectangles(Pens.AliceBlue, faces);
-                        foreach(Rectangle face in faces)
-                        {
-                            float s = (float)face.Width / img.Width;
-                            Size img_s = new Size((int)(img.Width * s), (int)(img.Height * s));
-                            Point img_p = new Point(face.X, face.Y - img_s.Height);
-                            g.DrawImage(img, new Rectangle(img_p, img_s));
-                        }
-                    }
-                }   
+                    if (faces != null && faces.Length > 0)
+                        g.DrawRectangles(Pens.AliceBlue, faces);
+                    if (eyes != null && eyes.Length > 0)
+                        g.DrawRectangles(Pens.BlueViolet, eyes);
+                }
             }
             catch(Exception) { }
             if(mirror)
                 image.RotateFlip(RotateFlipType.RotateNoneFlipX);
         }
 
-        private unsafe Rectangle[] DetectFaces(Bitmap frame)
+        private unsafe Rectangle[] DetectFaces(Bitmap frame, out Rectangle[] retEyes)
         {
             BitmapData data = frame.LockBits(new Rectangle(Point.Empty, frame.Size), ImageLockMode.ReadOnly, PixelFormat.Format24bppRgb);
             try
             {
-                return nat.detectFaces(data.Scan0.ToPointer(), data.Width, data.Height, data.Stride);
+                return nat.detectFaces(data.Scan0.ToPointer(), data.Width, data.Height, data.Stride, out retEyes);
             }
             finally
             {
