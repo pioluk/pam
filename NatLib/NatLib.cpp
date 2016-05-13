@@ -4,26 +4,21 @@
 
 #include "NatLib.h"
 
-array<System::Drawing::Rectangle>^ NatLib::Nat::detectFaces(void* imgRGB, int w, int h, int stride, [Out]array<Drawing::Rectangle>^% retEyes)
+inline Drawing::Rectangle rect_cv2net(const cv::Rect& rc)
+{
+	return Drawing::Rectangle(rc.x, rc.y, rc.width, rc.height);
+}
+
+array<Drawing::Rectangle>^ NatLib::Nat::detectFaces(void* imgRGB, int w, int h, int stride, [Out]array<Drawing::Rectangle>^% retEyes)
 {
 	std::vector<cv::Rect> e1;
 	std::vector<cv::Rect> f1 = natNat->detectFaces(imgRGB, w, h, stride, e1);
 	array<Drawing::Rectangle>^ f2 = gcnew array<Drawing::Rectangle>(f1.size());
 	for (size_t i = 0; i < f1.size(); ++i)
-	{
-		f2[i].X = f1[i].x;
-		f2[i].Y = f1[i].y;
-		f2[i].Width = f1[i].width;
-		f2[i].Height = f1[i].height;
-	}
+		f2[i] = rect_cv2net(f1[i]);
 	array<Drawing::Rectangle>^ e2 = gcnew array<Drawing::Rectangle>(e1.size());
 	for (size_t i = 0; i < e1.size(); ++i)
-	{
-		e2[i].X = e1[i].x;
-		e2[i].Y = e1[i].y;
-		e2[i].Width = e1[i].width;
-		e2[i].Height = e1[i].height;
-	}
+		e2[i] = rect_cv2net(e1[i]);
 	retEyes = e2;
 	return f2;
 }
