@@ -1,4 +1,7 @@
-﻿using System;
+﻿using AForge.Video;
+using AForge.Video.DirectShow;
+using NatLib;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -8,21 +11,23 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using AForge.Video;
-using AForge.Video.DirectShow;
-using NatLib;
 
 namespace Pam
 {
     public partial class MainForm : Form
     {
-
         private delegate void Proc();
+
         private Nat nat = new Nat();
         private VSourceDlg vSourceDlg = new VSourceDlg();
-        private Bitmap img = new Bitmap("sombrero.png");
+
         private bool playing = false;
+
         private bool mirror = false;
+
+        private IArtifact sombreroArtifact = new SombreroArtifact();
+        private IArtifact sunglassesArtifact = new SunglassesArtifact();
+        private IArtifact moustacheArtifact = new MoustacheArtifact();
 
         public MainForm()
         {
@@ -45,6 +50,7 @@ namespace Pam
         {
             if (playing)
                 return;
+
             vSourceDlg.refreshDevicesList();
             if (vSourceDlg.ShowDialog() == DialogResult.OK)
             {
@@ -73,7 +79,7 @@ namespace Pam
         {
             playing = false;
             if (!IsDisposed)
-                Invoke((Proc) delegate
+                Invoke((Proc)delegate
                 {
                     btnStartStop.Text = "Start";
                     videoPlayer.VideoSource = null;
@@ -94,20 +100,21 @@ namespace Pam
                 {
                     using (Graphics g = Graphics.FromImage(image))
                     {
-                        //g.DrawRectangles(Pens.AliceBlue, faces);
-                        foreach(Rectangle face in faces)
+                        foreach (Rectangle face in faces)
                         {
-                            float s = (float)face.Width / img.Width;
-                            Size img_s = new Size((int)(img.Width * s), (int)(img.Height * s));
-                            Point img_p = new Point(face.X, face.Y - img_s.Height);
-                            g.DrawImage(img, new Rectangle(img_p, img_s));
+                            sombreroArtifact.draw(g, face);
+                            moustacheArtifact.draw(g, face);
+                            sunglassesArtifact.draw(g, face);
                         }
                     }
-                }   
+                }
             }
-            catch(Exception) { }
-            if(mirror)
+            catch (Exception) { }
+
+            if (mirror)
+            {
                 image.RotateFlip(RotateFlipType.RotateNoneFlipX);
+            }
         }
 
         private unsafe Rectangle[] DetectFaces(Bitmap frame)
@@ -122,6 +129,5 @@ namespace Pam
                 frame.UnlockBits(data);
             }
         }
-
     }
 }
