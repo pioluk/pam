@@ -32,6 +32,7 @@
             this.videoPlayer = new AForge.Controls.VideoSourcePlayer();
             this.btnStartStop = new System.Windows.Forms.Button();
             this.checkMirror = new System.Windows.Forms.CheckBox();
+            this.btnClearFaces = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // videoPlayer
@@ -60,6 +61,8 @@
             // 
             this.checkMirror.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.checkMirror.AutoSize = true;
+            this.checkMirror.Checked = true;
+            this.checkMirror.CheckState = System.Windows.Forms.CheckState.Checked;
             this.checkMirror.Location = new System.Drawing.Point(93, 433);
             this.checkMirror.Name = "checkMirror";
             this.checkMirror.Size = new System.Drawing.Size(55, 17);
@@ -68,11 +71,22 @@
             this.checkMirror.UseVisualStyleBackColor = true;
             this.checkMirror.CheckedChanged += new System.EventHandler(this.checkMirror_CheckedChanged);
             // 
+            // btnClearFaces
+            // 
+            this.btnClearFaces.Location = new System.Drawing.Point(472, 429);
+            this.btnClearFaces.Name = "btnClearFaces";
+            this.btnClearFaces.Size = new System.Drawing.Size(75, 23);
+            this.btnClearFaces.TabIndex = 2;
+            this.btnClearFaces.Text = "Clear faces";
+            this.btnClearFaces.UseVisualStyleBackColor = true;
+            this.btnClearFaces.Click += new System.EventHandler(this.btnClearFaces_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(559, 464);
+            this.Controls.Add(this.btnClearFaces);
             this.Controls.Add(this.btnStartStop);
             this.Controls.Add(this.checkMirror);
             this.Controls.Add(this.videoPlayer);
@@ -89,6 +103,7 @@
         private AForge.Controls.VideoSourcePlayer videoPlayer;
         private System.Windows.Forms.Button btnStartStop;
         private System.Windows.Forms.CheckBox checkMirror;
+        private System.Windows.Forms.Button btnClearFaces;
     }
 }
 

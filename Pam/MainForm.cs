@@ -1,39 +1,49 @@
 ﻿using AForge.Video;
-using AForge.Video.DirectShow;
 using NatLib;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.Drawing.Imaging;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Pam
 {
     public partial class MainForm : Form
     {
+        private static readonly string TITLE = "PAM";
+
         private delegate void Proc();
 
         private Nat nat = new Nat();
         private VSourceDlg vSourceDlg = new VSourceDlg();
 
         private bool playing = false;
+        private bool mirror = true;
 
-        private bool mirror = false;
+        private readonly IArtifact[] availableArtifacts =
+        {
+            new SombreroArtifact(),
+            new SunglassesArtifact(),
+            new MoustacheArtifact()
+        };
 
-        private IArtifact sombreroArtifact = new SombreroArtifact();
-        private IArtifact sunglassesArtifact = new SunglassesArtifact();
-        private IArtifact moustacheArtifact = new MoustacheArtifact();
+        private volatile int frameCount = 0;
+
+        private Dictionary<float, IArtifact> faceArtifacts = new Dictionary<float, IArtifact>();
+        private List<Face> detectedFaces = new List<Face>();
+
+        private Timer timer = new Timer();
+
+        private Random rng = new Random();
 
         public MainForm()
         {
             InitializeComponent();
             videoPlayer.NewFrame += VideoPlayer_NewFrame;
             videoPlayer.PlayingFinished += VideoPlayer_PlayingFinished;
+
+            timer.Interval = 1000;
+            timer.Tick += FPSCount;
         }
 
         private void AtDispose()
@@ -60,6 +70,8 @@ namespace Pam
                 btnStartStop.Text = "Stop";
                 vSourceDlg.videoSource = null;
             }
+
+            timer.Start();
         }
 
         private void MainForm_Shown(object sender, EventArgs e)
@@ -91,21 +103,72 @@ namespace Pam
             mirror = checkMirror.Checked;
         }
 
-        private void VideoPlayer_NewFrame(object sender, ref Bitmap image)
+        private IArtifact RandomArtifact()
+        {
+            int index = rng.Next(0, 3);
+            return availableArtifacts[index];
+        }
+
+        private float MeanSquareError(Bitmap previousFrame, Bitmap frame)
+        {
+            Bitmap scaledPreviousFrame = previousFrame;
+
+            if (previousFrame.Size != frame.Size)
+            {
+                scaledPreviousFrame = new Bitmap(previousFrame, frame.Size);
+            }
+
+            float sumR = 0f, sumG = 0f, sumB = 0f;
+
+            BitmapData previousFrameData = scaledPreviousFrame.LockBits(new Rectangle(Point.Empty, scaledPreviousFrame.Size), ImageLockMode.ReadOnly, PixelFormat.Format24bppRgb);
+            BitmapData frameData = frame.LockBits(new Rectangle(Point.Empty, frame.Size), ImageLockMode.ReadOnly, PixelFormat.Format24bppRgb);
+
+            int bitmapSize = frame.Width * frame.Height;
+
+            unsafe
+            {
+                byte* previousPixels = (byte*)previousFrameData.Scan0.ToPointer();
+                byte* pixels = (byte*)frameData.Scan0.ToPointer();
+
+                for (int i = 0; i < bitmapSize; ++i)
+                {
+                    byte b1 = *(previousPixels);
+                    byte g1 = *(previousPixels + 1);
+                    byte r1 = *(previousPixels + 2);
+
+                    byte b2 = *(pixels);
+                    byte g2 = *(pixels + 1);
+                    byte r2 = *(pixels + 2);
+
+                    sumB += (b1 - b2) * (b1 - b2);
+                    sumG += (g1 - g2) * (g1 - g2);
+                    sumR += (r1 - r2) * (r1 - r2);
+
+                    previousPixels += 3;
+                    pixels += 3;
+                }
+            }
+
+            scaledPreviousFrame.UnlockBits(previousFrameData);
+            frame.UnlockBits(frameData);
+
+            sumB /= bitmapSize;
+            sumG /= bitmapSize;
+            sumR /= bitmapSize;
+
+            return (sumR + sumG + sumB) / 3f;
+        }
+
+        private void VideoPlayer_NewFrame(object sender, ref Bitmap frame)
         {
             try
             {
-                Rectangle[] faces = DetectFaces(image);
+                Rectangle[] faces = DetectFaces(frame);
                 if (faces != null && faces.Length > 0)
                 {
-                    using (Graphics g = Graphics.FromImage(image))
+                    using (Graphics g = Graphics.FromImage(frame))
                     {
-                        foreach (Rectangle face in faces)
-                        {
-                            sombreroArtifact.draw(g, face);
-                            moustacheArtifact.draw(g, face);
-                            sunglassesArtifact.draw(g, face);
-                        }
+                        DrawArtifacts(g, frame, faces);
                     }
                 }
             }
@@ -113,8 +176,67 @@ namespace Pam
 
             if (mirror)
             {
-                image.RotateFlip(RotateFlipType.RotateNoneFlipX);
+                frame.RotateFlip(RotateFlipType.RotateNoneFlipX);
             }
+
+            ++frameCount;
+        }
+
+        private void DrawArtifacts(Graphics g, Bitmap frame, Rectangle[] faces)
+        {
+            detectedFaces.ForEach(f => f.InUse = false);
+
+            foreach (Rectangle face in faces)
+            {
+                List<Face> unusedFaces = detectedFaces.FindAll(f => !f.InUse);
+
+                Bitmap faceBitmap = frame.Clone(new Rectangle(face.Location, face.Size), frame.PixelFormat);
+
+                float bestFactor = 1e3f;
+                Face bestFace = null;
+
+                foreach (var f in unusedFaces)
+                {
+                    if (f.TimesUnused > 100)
+                    {
+                        detectedFaces.Remove(f);
+                        // Console.WriteLine("Removing stale face");
+                        continue;
+                    }
+
+                    ++f.TimesUnused;
+
+                    float mse = MeanSquareError(f.Bitmap, faceBitmap);
+                    float factor = mse / (faceBitmap.Width * faceBitmap.Height) * 100f;
+
+                    if (factor < bestFactor && factor < 15f)
+                    {
+                        bestFactor = factor;
+                        bestFace = f;
+                    }
+                }
+
+                if (bestFace != null)
+                {
+                    bestFace.InUse = true;
+                    bestFace.TimesUnused = 0;
+                    bestFace.Artifact.draw(g, face);
+                    // Console.WriteLine("Using existing face");
+                }
+                else
+                {
+                    IArtifact artifact = RandomArtifact();
+                    artifact.draw(g, face);
+                    detectedFaces.Add(new Face { TimesUnused = 0, Bitmap = faceBitmap, Artifact = artifact });
+                    // Console.WriteLine("No match. Adding new face");
+                }
+            }
+        }
+
+        private void FPSCount(object sender, EventArgs args)
+        {
+            Text = string.Format("{0} ({1} FPS)", TITLE, frameCount.ToString());
+            frameCount = 0;
         }
 
         private unsafe Rectangle[] DetectFaces(Bitmap frame)
@@ -128,6 +250,11 @@ namespace Pam
             {
                 frame.UnlockBits(data);
             }
+        }
+
+        private void btnClearFaces_Click(object sender, EventArgs e)
+        {
+            detectedFaces.Clear();
         }
     }
 }
