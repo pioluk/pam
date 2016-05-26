@@ -29,7 +29,6 @@ namespace Pam
 
         private volatile int frameCount = 0;
 
-        private Dictionary<float, IArtifact> faceArtifacts = new Dictionary<float, IArtifact>();
         private List<Face> detectedFaces = new List<Face>();
 
         private Timer timer = new Timer();
