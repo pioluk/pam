@@ -111,10 +111,12 @@ namespace Pam
         private float MeanSquareError(Bitmap previousFrame, Bitmap frame)
         {
             Bitmap scaledPreviousFrame = previousFrame;
+            bool clonedPrevFrame = false;
 
             if (previousFrame.Size != frame.Size)
             {
                 scaledPreviousFrame = new Bitmap(previousFrame, frame.Size);
+                clonedPrevFrame = true;
             }
 
             float sumR = 0f, sumG = 0f, sumB = 0f;
@@ -150,6 +152,11 @@ namespace Pam
 
             scaledPreviousFrame.UnlockBits(previousFrameData);
             frame.UnlockBits(frameData);
+
+            if(clonedPrevFrame)
+            {
+                scaledPreviousFrame.Dispose();
+            }
 
             sumB /= bitmapSize;
             sumG /= bitmapSize;
