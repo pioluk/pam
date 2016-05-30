@@ -199,7 +199,7 @@ namespace Pam
                     if (f.TimesUnused > 100)
                     {
                         detectedFaces.Remove(f);
-                        // Console.WriteLine("Removing stale face");
+                        f.Dispose();
                         continue;
                     }
 
