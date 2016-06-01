@@ -206,15 +206,16 @@ namespace Pam
 
             foreach (Rectangle face in faces)
             {
-                List<Face> unusedFaces = detectedFaces.FindAll(f => !f.InUse);
-
                 Bitmap faceBitmap = frame.Clone(new Rectangle(face.Location, face.Size), frame.PixelFormat);
 
                 float bestFactor = 1e3f;
                 Face bestFace = null;
 
-                foreach (var f in unusedFaces)
+                foreach (Face f in detectedFaces)
                 {
+                    if (f.InUse)
+                        continue;
+
                     if (f.TimesUnused > 100)
                     {
                         detectedFaces.Remove(f);
