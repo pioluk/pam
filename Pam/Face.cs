@@ -9,6 +9,7 @@ namespace Pam
         public Bitmap Bitmap { get; set; }
         public IArtifact Artifact { get; set; }
         public bool InUse { get; set; } = false;
+        public RectFilter RectFilter = new RectFilter();
 
         public void Dispose()
         {

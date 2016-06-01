@@ -103,6 +103,7 @@
   <ItemGroup>
     <Compile Include="Face.cs" />
     <Compile Include="MoustacheArtifact.cs" />
+    <Compile Include="RectFilter.cs" />
     <Compile Include="SunglassesArtifact.cs" />
     <Compile Include="IArtifact.cs" />
     <Compile Include="MainForm.cs">

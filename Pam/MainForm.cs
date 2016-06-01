@@ -226,7 +226,8 @@ namespace Pam
                 {
                     bestFace.InUse = true;
                     bestFace.TimesUnused = 0;
-                    bestFace.Artifact.draw(g, face);
+                    bestFace.RectFilter.add(face);
+                    bestFace.Artifact.draw(g, bestFace.RectFilter.Rectangle);
                     bestFace.Bitmap.Dispose();
                     bestFace.Bitmap = faceBitmap;
                     // Console.WriteLine("Using existing face");
@@ -234,8 +235,10 @@ namespace Pam
                 else
                 {
                     IArtifact artifact = RandomArtifact();
-                    artifact.draw(g, face);
-                    detectedFaces.Add(new Face { TimesUnused = 0, Bitmap = faceBitmap, Artifact = artifact });
+                    Face newFace = new Face { TimesUnused = 0, Bitmap = faceBitmap, Artifact = artifact };
+                    newFace.RectFilter.add(face);
+                    detectedFaces.Add(newFace);
+                    artifact.draw(g, newFace.RectFilter.Rectangle);
                     // Console.WriteLine("No match. Adding new face");
                 }
             }
