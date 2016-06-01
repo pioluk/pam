@@ -119,7 +119,7 @@ namespace Pam
                 clonedPrevFrame = true;
             }
 
-            float sum = 0f;
+            ulong sum = 0;
 
             BitmapData previousFrameData = scaledPreviousFrame.LockBits(new Rectangle(Point.Empty, scaledPreviousFrame.Size), ImageLockMode.ReadOnly, PixelFormat.Format24bppRgb);
             BitmapData frameData = frame.LockBits(new Rectangle(Point.Empty, frame.Size), ImageLockMode.ReadOnly, PixelFormat.Format24bppRgb);
@@ -142,10 +142,10 @@ namespace Pam
                         byte pVal = *pp;
                         byte val = *p;
 
-                        int diff = pVal - val;
-                        int sd = diff * diff;
+                        long diff = pVal - val;
+                        long sd = diff * diff;
 
-                        sum += sd;
+                        sum += (ulong)sd;
 
                         ++pp;
                         ++p;
@@ -164,7 +164,7 @@ namespace Pam
                 scaledPreviousFrame.Dispose();
             }
 
-            return sum / (width3 * height);
+            return ((float)sum) / (width3 * height);
         }
 
         private void VideoPlayer_NewFrame(object sender, ref Bitmap frame)
