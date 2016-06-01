@@ -119,34 +119,40 @@ namespace Pam
                 clonedPrevFrame = true;
             }
 
-            float sumR = 0f, sumG = 0f, sumB = 0f;
+            ulong sum = 0;
 
             BitmapData previousFrameData = scaledPreviousFrame.LockBits(new Rectangle(Point.Empty, scaledPreviousFrame.Size), ImageLockMode.ReadOnly, PixelFormat.Format24bppRgb);
             BitmapData frameData = frame.LockBits(new Rectangle(Point.Empty, frame.Size), ImageLockMode.ReadOnly, PixelFormat.Format24bppRgb);
 
-            int bitmapSize = frame.Width * frame.Height;
+            int width3 = frameData.Width * 3;
+            int height = frameData.Height;
 
             unsafe
             {
                 byte* previousPixels = (byte*)previousFrameData.Scan0.ToPointer();
                 byte* pixels = (byte*)frameData.Scan0.ToPointer();
 
-                for (int i = 0; i < bitmapSize; ++i)
+                for (int y = 0; y < height; ++y)
                 {
-                    byte b1 = *(previousPixels);
-                    byte g1 = *(previousPixels + 1);
-                    byte r1 = *(previousPixels + 2);
+                    byte* pp = previousPixels;
+                    byte* p = pixels;
 
-                    byte b2 = *(pixels);
-                    byte g2 = *(pixels + 1);
-                    byte r2 = *(pixels + 2);
+                    for (int x = 0; x < width3; ++x)
+                    {
+                        byte pVal = *pp;
+                        byte val = *p;
 
-                    sumB += (b1 - b2) * (b1 - b2);
-                    sumG += (g1 - g2) * (g1 - g2);
-                    sumR += (r1 - r2) * (r1 - r2);
+                        long diff = pVal - val;
+                        long sd = diff * diff;
 
-                    previousPixels += 3;
-                    pixels += 3;
+                        sum += (ulong)sd;
+
+                        ++pp;
+                        ++p;
+                    }
+
+                    previousPixels += previousFrameData.Stride;
+                    pixels += frameData.Stride;
                 }
             }
 
@@ -158,11 +164,7 @@ namespace Pam
                 scaledPreviousFrame.Dispose();
             }
 
-            sumB /= bitmapSize;
-            sumG /= bitmapSize;
-            sumR /= bitmapSize;
-
-            return (sumR + sumG + sumB) / 3f;
+            return ((float)sum) / (width3 * height);
         }
 
         private void VideoPlayer_NewFrame(object sender, ref Bitmap frame)
@@ -170,15 +172,14 @@ namespace Pam
             try
             {
                 Rectangle[] faces = DetectFaces(frame);
-                if (faces != null && faces.Length > 0)
-                {
-                    using (Graphics g = Graphics.FromImage(frame))
-                    {
-                        DrawArtifacts(g, frame, faces);
-                    }
-                }
+                UpdateFacesInfo(frame, faces);
             }
             catch (Exception) { }
+
+            using (Graphics g = Graphics.FromImage(frame))
+            {
+                DrawArtifacts(g);
+            }
 
             if (mirror)
             {
@@ -188,37 +189,52 @@ namespace Pam
             ++frameCount;
         }
 
-        private void DrawArtifacts(Graphics g, Bitmap frame, Rectangle[] faces)
+        private void DrawArtifacts(Graphics g)
+        {
+            foreach(Face face in detectedFaces)
+            {
+                if(face.InUse)
+                {
+                    face.Artifact.draw(g, face.RectFilter.Rectangle);
+                }
+            }
+        }
+
+        private void UpdateFacesInfo(Bitmap frame, Rectangle[] faceRects)
         {
             detectedFaces.ForEach(f => f.InUse = false);
 
-            foreach (Rectangle face in faces)
-            {
-                List<Face> unusedFaces = detectedFaces.FindAll(f => !f.InUse);
+            if (faceRects == null || faceRects.Length == 0)
+                return;
 
-                Bitmap faceBitmap = frame.Clone(new Rectangle(face.Location, face.Size), frame.PixelFormat);
+            foreach (Rectangle faceRect in faceRects)
+            {
+                Bitmap faceBitmap = frame.Clone(new Rectangle(faceRect.Location, faceRect.Size), frame.PixelFormat);
 
                 float bestFactor = 1e3f;
                 Face bestFace = null;
 
-                foreach (var f in unusedFaces)
+                foreach (Face face in detectedFaces)
                 {
-                    if (f.TimesUnused > 100)
+                    if (face.InUse)
+                        continue;
+
+                    if (face.TimesUnused > 100)
                     {
-                        detectedFaces.Remove(f);
-                        f.Dispose();
+                        detectedFaces.Remove(face);
+                        face.Dispose();
                         continue;
                     }
 
-                    ++f.TimesUnused;
+                    ++face.TimesUnused;
 
-                    float mse = MeanSquareError(f.Bitmap, faceBitmap);
+                    float mse = MeanSquareError(face.Bitmap, faceBitmap);
                     float factor = mse / (faceBitmap.Width * faceBitmap.Height) * 100f;
 
                     if (factor < bestFactor && factor < 15f)
                     {
                         bestFactor = factor;
-                        bestFace = f;
+                        bestFace = face;
                     }
                 }
 
@@ -226,20 +242,16 @@ namespace Pam
                 {
                     bestFace.InUse = true;
                     bestFace.TimesUnused = 0;
-                    bestFace.RectFilter.add(face);
-                    bestFace.Artifact.draw(g, bestFace.RectFilter.Rectangle);
+                    bestFace.RectFilter.add(faceRect);
                     bestFace.Bitmap.Dispose();
                     bestFace.Bitmap = faceBitmap;
-                    // Console.WriteLine("Using existing face");
                 }
                 else
                 {
                     IArtifact artifact = RandomArtifact();
                     Face newFace = new Face { TimesUnused = 0, Bitmap = faceBitmap, Artifact = artifact };
-                    newFace.RectFilter.add(face);
+                    newFace.RectFilter.add(faceRect);
                     detectedFaces.Add(newFace);
-                    artifact.draw(g, newFace.RectFilter.Rectangle);
-                    // Console.WriteLine("No match. Adding new face");
                 }
             }
         }
