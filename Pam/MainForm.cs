@@ -140,13 +140,15 @@ namespace Pam
                     for (int x = 0; x < width3; ++x)
                     {
                         byte pVal = *pp;
-
                         byte val = *p;
 
-                        sum += (pVal - val) * (pVal - val);
+                        int diff = pVal - val;
+                        int sd = diff * diff;
 
-                        pp += 1;
-                        p += 1;
+                        sum += sd;
+
+                        ++pp;
+                        ++p;
                     }
 
                     previousPixels += previousFrameData.Stride;
@@ -162,10 +164,7 @@ namespace Pam
                 scaledPreviousFrame.Dispose();
             }
 
-            int bitmapSize = frame.Width * frame.Height;
-            sum /= bitmapSize;
-
-            return sum / 3f;
+            return sum / (width3 * height);
         }
 
         private void VideoPlayer_NewFrame(object sender, ref Bitmap frame)
