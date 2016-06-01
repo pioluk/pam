@@ -119,37 +119,34 @@ namespace Pam
                 clonedPrevFrame = true;
             }
 
-            float sumR = 0f, sumG = 0f, sumB = 0f;
+            float sum = 0f;
 
             BitmapData previousFrameData = scaledPreviousFrame.LockBits(new Rectangle(Point.Empty, scaledPreviousFrame.Size), ImageLockMode.ReadOnly, PixelFormat.Format24bppRgb);
             BitmapData frameData = frame.LockBits(new Rectangle(Point.Empty, frame.Size), ImageLockMode.ReadOnly, PixelFormat.Format24bppRgb);
+
+            int width3 = frameData.Width * 3;
+            int height = frameData.Height;
 
             unsafe
             {
                 byte* previousPixels = (byte*)previousFrameData.Scan0.ToPointer();
                 byte* pixels = (byte*)frameData.Scan0.ToPointer();
 
-                for (int y = 0; y < frameData.Height; ++y)
+                for (int y = 0; y < height; ++y)
                 {
                     byte* pp = previousPixels;
                     byte* p = pixels;
 
-                    for (int x = 0; x < frameData.Width; ++x)
+                    for (int x = 0; x < width3; ++x)
                     {
-                        byte b1 = *(pp);
-                        byte g1 = *(pp + 1);
-                        byte r1 = *(pp + 2);
+                        byte pVal = *pp;
 
-                        byte b2 = *(p);
-                        byte g2 = *(p + 1);
-                        byte r2 = *(p + 2);
+                        byte val = *p;
 
-                        sumB += (b1 - b2) * (b1 - b2);
-                        sumG += (g1 - g2) * (g1 - g2);
-                        sumR += (r1 - r2) * (r1 - r2);
+                        sum += (pVal - val) * (pVal - val);
 
-                        pp += 3;
-                        p += 3;
+                        pp += 1;
+                        p += 1;
                     }
 
                     previousPixels += previousFrameData.Stride;
@@ -166,11 +163,9 @@ namespace Pam
             }
 
             int bitmapSize = frame.Width * frame.Height;
-            sumB /= bitmapSize;
-            sumG /= bitmapSize;
-            sumR /= bitmapSize;
+            sum /= bitmapSize;
 
-            return (sumR + sumG + sumB) / 3f;
+            return sum / 3f;
         }
 
         private void VideoPlayer_NewFrame(object sender, ref Bitmap frame)
