@@ -172,9 +172,10 @@ namespace Pam
                 Rectangle[] faces = DetectFaces(frame);
                 if (faces != null && faces.Length > 0)
                 {
+                    UpdateFacesInfo(frame, faces);
                     using (Graphics g = Graphics.FromImage(frame))
                     {
-                        DrawArtifacts(g, frame, faces);
+                        DrawArtifacts(g);
                     }
                 }
             }
@@ -188,7 +189,18 @@ namespace Pam
             ++frameCount;
         }
 
-        private void DrawArtifacts(Graphics g, Bitmap frame, Rectangle[] faces)
+        private void DrawArtifacts(Graphics g)
+        {
+            foreach(Face face in detectedFaces)
+            {
+                if(face.InUse)
+                {
+                    face.Artifact.draw(g, face.RectFilter.Rectangle);
+                }
+            }
+        }
+
+        private void UpdateFacesInfo(Bitmap frame, Rectangle[] faces)
         {
             detectedFaces.ForEach(f => f.InUse = false);
 
@@ -227,7 +239,7 @@ namespace Pam
                     bestFace.InUse = true;
                     bestFace.TimesUnused = 0;
                     bestFace.RectFilter.add(face);
-                    bestFace.Artifact.draw(g, bestFace.RectFilter.Rectangle);
+                    //bestFace.Artifact.draw(g, bestFace.RectFilter.Rectangle);
                     bestFace.Bitmap.Dispose();
                     bestFace.Bitmap = faceBitmap;
                     // Console.WriteLine("Using existing face");
@@ -238,7 +250,7 @@ namespace Pam
                     Face newFace = new Face { TimesUnused = 0, Bitmap = faceBitmap, Artifact = artifact };
                     newFace.RectFilter.add(face);
                     detectedFaces.Add(newFace);
-                    artifact.draw(g, newFace.RectFilter.Rectangle);
+                    //artifact.draw(g, newFace.RectFilter.Rectangle);
                     // Console.WriteLine("No match. Adding new face");
                 }
             }
