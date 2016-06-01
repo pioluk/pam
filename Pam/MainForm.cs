@@ -227,8 +227,9 @@ namespace Pam
                     bestFace.InUse = true;
                     bestFace.TimesUnused = 0;
                     bestFace.Artifact.draw(g, face);
+                    bestFace.Bitmap.Dispose();
+                    bestFace.Bitmap = faceBitmap;
                     // Console.WriteLine("Using existing face");
-                    faceBitmap.Dispose();
                 }
                 else
                 {
