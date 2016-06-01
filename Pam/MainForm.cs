@@ -229,9 +229,9 @@ namespace Pam
                     ++face.TimesUnused;
 
                     float mse = MeanSquareError(face.Bitmap, faceBitmap);
-                    float factor = mse / (faceBitmap.Width * faceBitmap.Height) * 100f;
+                    float factor = mse;
 
-                    if (factor < bestFactor && factor < 15f)
+                    if (factor < bestFactor)
                     {
                         bestFactor = factor;
                         bestFace = face;
