@@ -200,38 +200,38 @@ namespace Pam
             }
         }
 
-        private void UpdateFacesInfo(Bitmap frame, Rectangle[] faces)
+        private void UpdateFacesInfo(Bitmap frame, Rectangle[] faceRects)
         {
             detectedFaces.ForEach(f => f.InUse = false);
 
-            foreach (Rectangle face in faces)
+            foreach (Rectangle faceRect in faceRects)
             {
-                Bitmap faceBitmap = frame.Clone(new Rectangle(face.Location, face.Size), frame.PixelFormat);
+                Bitmap faceBitmap = frame.Clone(new Rectangle(faceRect.Location, faceRect.Size), frame.PixelFormat);
 
                 float bestFactor = 1e3f;
                 Face bestFace = null;
 
-                foreach (Face f in detectedFaces)
+                foreach (Face face in detectedFaces)
                 {
-                    if (f.InUse)
+                    if (face.InUse)
                         continue;
 
-                    if (f.TimesUnused > 100)
+                    if (face.TimesUnused > 100)
                     {
-                        detectedFaces.Remove(f);
-                        f.Dispose();
+                        detectedFaces.Remove(face);
+                        face.Dispose();
                         continue;
                     }
 
-                    ++f.TimesUnused;
+                    ++face.TimesUnused;
 
-                    float mse = MeanSquareError(f.Bitmap, faceBitmap);
+                    float mse = MeanSquareError(face.Bitmap, faceBitmap);
                     float factor = mse / (faceBitmap.Width * faceBitmap.Height) * 100f;
 
                     if (factor < bestFactor && factor < 15f)
                     {
                         bestFactor = factor;
-                        bestFace = f;
+                        bestFace = face;
                     }
                 }
 
@@ -239,7 +239,7 @@ namespace Pam
                 {
                     bestFace.InUse = true;
                     bestFace.TimesUnused = 0;
-                    bestFace.RectFilter.add(face);
+                    bestFace.RectFilter.add(faceRect);
                     bestFace.Bitmap.Dispose();
                     bestFace.Bitmap = faceBitmap;
                 }
@@ -247,7 +247,7 @@ namespace Pam
                 {
                     IArtifact artifact = RandomArtifact();
                     Face newFace = new Face { TimesUnused = 0, Bitmap = faceBitmap, Artifact = artifact };
-                    newFace.RectFilter.add(face);
+                    newFace.RectFilter.add(faceRect);
                     detectedFaces.Add(newFace);
                 }
             }
