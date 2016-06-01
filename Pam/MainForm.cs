@@ -170,16 +170,14 @@ namespace Pam
             try
             {
                 Rectangle[] faces = DetectFaces(frame);
-                if (faces != null && faces.Length > 0)
-                {
-                    UpdateFacesInfo(frame, faces);
-                    using (Graphics g = Graphics.FromImage(frame))
-                    {
-                        DrawArtifacts(g);
-                    }
-                }
+                UpdateFacesInfo(frame, faces);
             }
             catch (Exception) { }
+
+            using (Graphics g = Graphics.FromImage(frame))
+            {
+                DrawArtifacts(g);
+            }
 
             if (mirror)
             {
@@ -203,6 +201,9 @@ namespace Pam
         private void UpdateFacesInfo(Bitmap frame, Rectangle[] faceRects)
         {
             detectedFaces.ForEach(f => f.InUse = false);
+
+            if (faceRects == null || faceRects.Length == 0)
+                return;
 
             foreach (Rectangle faceRect in faceRects)
             {
