@@ -104,7 +104,7 @@ namespace Pam
 
         private IArtifact RandomArtifact()
         {
-            int index = rng.Next(0, 3);
+            int index = rng.Next(0, availableArtifacts.Length);
             return availableArtifacts[index];
         }
 
