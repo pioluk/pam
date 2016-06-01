@@ -124,29 +124,36 @@ namespace Pam
             BitmapData previousFrameData = scaledPreviousFrame.LockBits(new Rectangle(Point.Empty, scaledPreviousFrame.Size), ImageLockMode.ReadOnly, PixelFormat.Format24bppRgb);
             BitmapData frameData = frame.LockBits(new Rectangle(Point.Empty, frame.Size), ImageLockMode.ReadOnly, PixelFormat.Format24bppRgb);
 
-            int bitmapSize = frame.Width * frame.Height;
-
             unsafe
             {
                 byte* previousPixels = (byte*)previousFrameData.Scan0.ToPointer();
                 byte* pixels = (byte*)frameData.Scan0.ToPointer();
 
-                for (int i = 0; i < bitmapSize; ++i)
+                for (int y = 0; y < frameData.Height; ++y)
                 {
-                    byte b1 = *(previousPixels);
-                    byte g1 = *(previousPixels + 1);
-                    byte r1 = *(previousPixels + 2);
+                    byte* pp = previousPixels;
+                    byte* p = pixels;
 
-                    byte b2 = *(pixels);
-                    byte g2 = *(pixels + 1);
-                    byte r2 = *(pixels + 2);
+                    for (int x = 0; x < frameData.Width; ++x)
+                    {
+                        byte b1 = *(pp);
+                        byte g1 = *(pp + 1);
+                        byte r1 = *(pp + 2);
 
-                    sumB += (b1 - b2) * (b1 - b2);
-                    sumG += (g1 - g2) * (g1 - g2);
-                    sumR += (r1 - r2) * (r1 - r2);
+                        byte b2 = *(p);
+                        byte g2 = *(p + 1);
+                        byte r2 = *(p + 2);
 
-                    previousPixels += 3;
-                    pixels += 3;
+                        sumB += (b1 - b2) * (b1 - b2);
+                        sumG += (g1 - g2) * (g1 - g2);
+                        sumR += (r1 - r2) * (r1 - r2);
+
+                        pp += 3;
+                        p += 3;
+                    }
+
+                    previousPixels += previousFrameData.Stride;
+                    pixels += frameData.Stride;
                 }
             }
 
@@ -158,6 +165,7 @@ namespace Pam
                 scaledPreviousFrame.Dispose();
             }
 
+            int bitmapSize = frame.Width * frame.Height;
             sumB /= bitmapSize;
             sumG /= bitmapSize;
             sumR /= bitmapSize;
