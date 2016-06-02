@@ -125,7 +125,7 @@ namespace Pam
 
             foreach (Rectangle faceRect in faceRects)
             {
-                Bitmap faceBitmap = frame.Clone(new Rectangle(faceRect.Location, faceRect.Size), frame.PixelFormat);
+                Bitmap faceBitmap = frame.Clone(faceRect, frame.PixelFormat);
 
                 float bestFactor = 1e3f;
                 Face bestFace = null;
