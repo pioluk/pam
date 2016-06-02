@@ -70,7 +70,7 @@ namespace Pam
                 {
                     float[] hist = calcHistogram(faceBitmap);
 
-                    float bestFactor = 1e3f;
+                    double bestFactor = 1e3f;
                     Face bestFace = null;
 
                     foreach (Face face in detectedFaces)
@@ -78,7 +78,7 @@ namespace Pam
                         if (face.InUse)
                             continue;
 
-                        float factor = compareHistograms(hist, face.histogram);
+                        double factor = compareHistograms(hist, face.histogram);
 
                         if (factor < bestFactor)
                         {
@@ -143,9 +143,9 @@ namespace Pam
             return norm_hist;
         }
 
-        private static float compareHistograms(float[] h1, float[] h2)
+        private static double compareHistograms(float[] h1, float[] h2)
         {
-            float mse = 0f;
+            double mse = 0f;
 
             for(int i = 0; i < Face.HIST_LEN; ++i)
             {
