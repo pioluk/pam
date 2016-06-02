@@ -108,10 +108,15 @@ namespace Pam
 
         private static ulong distanceFactor(Face face, Rectangle rect)
         {
-            int dl = face.RectFilter.Rectangle.Left - rect.Left;
-            int dr = face.RectFilter.Rectangle.Right - rect.Right;
-            int dt = face.RectFilter.Rectangle.Top - rect.Top;
-            int db = face.RectFilter.Rectangle.Bottom - rect.Bottom;
+            return rectsDistance(face.RectFilter.Rectangle, rect);
+        }
+
+        private static ulong rectsDistance(Rectangle a, Rectangle b)
+        {
+            int dl = a.Left - b.Left;
+            int dr = a.Right - b.Right;
+            int dt = a.Top - b.Top;
+            int db = a.Bottom - b.Bottom;
             ulong ll = (ulong)(dl * dl);
             ulong rr = (ulong)(dr * dr);
             ulong tt = (ulong)(dt * dt);
