@@ -108,27 +108,15 @@ namespace Pam
 
         private static ulong distanceFactor(Face face, Rectangle rect)
         {
-            ulong dist = squaredCentersDistance(face.RectFilter.Rectangle, rect);
-            return dist;
-        }
-
-        private static ulong squaredCentersDistance(Rectangle a, Rectangle b)
-        {
-            return squaredDistance(rectCenter(a), rectCenter(b));
-        }
-
-        private static Point rectCenter(Rectangle rect)
-        {
-            return new Point(rect.X + rect.Width / 2, rect.Y + rect.Height / 2);
-        }
-
-        private static ulong squaredDistance(Point a, Point b)
-        {
-            int dx = a.X - b.X;
-            int dy = a.Y - b.Y;
-            ulong xx = (ulong)(dx * dx);
-            ulong yy = (ulong)(dy * dy);
-            return xx + yy;
+            int dl = face.RectFilter.Rectangle.Left - rect.Left;
+            int dr = face.RectFilter.Rectangle.Right - rect.Right;
+            int dt = face.RectFilter.Rectangle.Top - rect.Top;
+            int db = face.RectFilter.Rectangle.Bottom - rect.Bottom;
+            ulong ll = (ulong)(dl * dl);
+            ulong rr = (ulong)(dr * dr);
+            ulong tt = (ulong)(dt * dt);
+            ulong bb = (ulong)(db * db);
+            return ll + rr + tt + bb;
         }
 
     }
