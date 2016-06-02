@@ -33,65 +33,6 @@ namespace Pam
             return availableArtifacts[index];
         }
 
-        private float MeanSquareError(Bitmap previousFrame, Bitmap frame)
-        {
-            Bitmap scaledPreviousFrame = previousFrame;
-            bool clonedPrevFrame = false;
-
-            if (previousFrame.Size != frame.Size)
-            {
-                scaledPreviousFrame = new Bitmap(previousFrame, frame.Size);
-                clonedPrevFrame = true;
-            }
-
-            ulong sum = 0;
-
-            BitmapData previousFrameData = scaledPreviousFrame.LockBits(new Rectangle(Point.Empty, scaledPreviousFrame.Size), ImageLockMode.ReadOnly, PixelFormat.Format24bppRgb);
-            BitmapData frameData = frame.LockBits(new Rectangle(Point.Empty, frame.Size), ImageLockMode.ReadOnly, PixelFormat.Format24bppRgb);
-
-            int width3 = frameData.Width * 3;
-            int height = frameData.Height;
-
-            unsafe
-            {
-                byte* previousPixels = (byte*)previousFrameData.Scan0.ToPointer();
-                byte* pixels = (byte*)frameData.Scan0.ToPointer();
-
-                for (int y = 0; y < height; ++y)
-                {
-                    byte* pp = previousPixels;
-                    byte* p = pixels;
-
-                    for (int x = 0; x < width3; ++x)
-                    {
-                        byte pVal = *pp;
-                        byte val = *p;
-
-                        long diff = pVal - val;
-                        long sd = diff * diff;
-
-                        sum += (ulong)sd;
-
-                        ++pp;
-                        ++p;
-                    }
-
-                    previousPixels += previousFrameData.Stride;
-                    pixels += frameData.Stride;
-                }
-            }
-
-            scaledPreviousFrame.UnlockBits(previousFrameData);
-            frame.UnlockBits(frameData);
-
-            if (clonedPrevFrame)
-            {
-                scaledPreviousFrame.Dispose();
-            }
-
-            return ((float)sum) / (width3 * height);
-        }
-
         public void DrawArtifacts(Graphics g)
         {
             foreach (Face face in detectedFaces)
@@ -135,8 +76,7 @@ namespace Pam
                     if (face.InUse)
                         continue;
 
-                    float mse = MeanSquareError(face.Bitmap, faceBitmap);
-                    float factor = mse;
+                    float factor = 0;
 
                     if (factor < bestFactor)
                     {
