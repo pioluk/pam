@@ -42,14 +42,14 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.videoPlayer.Location = new System.Drawing.Point(0, 0);
             this.videoPlayer.Name = "videoPlayer";
-            this.videoPlayer.Size = new System.Drawing.Size(559, 423);
+            this.videoPlayer.Size = new System.Drawing.Size(568, 409);
             this.videoPlayer.TabIndex = 0;
             this.videoPlayer.VideoSource = null;
             // 
             // btnStartStop
             // 
             this.btnStartStop.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.btnStartStop.Location = new System.Drawing.Point(12, 429);
+            this.btnStartStop.Location = new System.Drawing.Point(12, 415);
             this.btnStartStop.Name = "btnStartStop";
             this.btnStartStop.Size = new System.Drawing.Size(75, 23);
             this.btnStartStop.TabIndex = 0;
@@ -63,7 +63,7 @@
             this.checkMirror.AutoSize = true;
             this.checkMirror.Checked = true;
             this.checkMirror.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkMirror.Location = new System.Drawing.Point(93, 433);
+            this.checkMirror.Location = new System.Drawing.Point(93, 419);
             this.checkMirror.Name = "checkMirror";
             this.checkMirror.Size = new System.Drawing.Size(55, 17);
             this.checkMirror.TabIndex = 1;
@@ -73,7 +73,8 @@
             // 
             // btnClearFaces
             // 
-            this.btnClearFaces.Location = new System.Drawing.Point(472, 429);
+            this.btnClearFaces.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnClearFaces.Location = new System.Drawing.Point(481, 415);
             this.btnClearFaces.Name = "btnClearFaces";
             this.btnClearFaces.Size = new System.Drawing.Size(75, 23);
             this.btnClearFaces.TabIndex = 2;
@@ -85,7 +86,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(559, 464);
+            this.ClientSize = new System.Drawing.Size(568, 450);
             this.Controls.Add(this.btnClearFaces);
             this.Controls.Add(this.btnStartStop);
             this.Controls.Add(this.checkMirror);
