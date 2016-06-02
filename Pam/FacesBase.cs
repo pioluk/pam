@@ -72,7 +72,7 @@ namespace Pam
             {
                 using (Bitmap faceBitmap = frame.Clone(faceRect, frame.PixelFormat))
                 {
-                    float bestFactor = 1e3f;
+                    ulong bestFactor = 10000;
                     Face bestFace = null;
 
                     foreach (Face face in detectedFaces)
@@ -80,7 +80,7 @@ namespace Pam
                         if (face.InUse)
                             continue;
 
-                        float factor = 0;
+                        ulong factor = distanceFactor(face, faceRect);
 
                         if (factor < bestFactor)
                         {
@@ -104,6 +104,31 @@ namespace Pam
                     }
                 }
             }
+        }
+
+        private static ulong distanceFactor(Face face, Rectangle rect)
+        {
+            ulong dist = squaredCentersDistance(face.RectFilter.Rectangle, rect);
+            return dist;
+        }
+
+        private static ulong squaredCentersDistance(Rectangle a, Rectangle b)
+        {
+            return squaredDistance(rectCenter(a), rectCenter(b));
+        }
+
+        private static Point rectCenter(Rectangle rect)
+        {
+            return new Point(rect.X + rect.Width / 2, rect.Y + rect.Height / 2);
+        }
+
+        private static ulong squaredDistance(Point a, Point b)
+        {
+            int dx = a.X - b.X;
+            int dy = a.Y - b.Y;
+            ulong xx = (ulong)(dx * dx);
+            ulong yy = (ulong)(dy * dy);
+            return xx + yy;
         }
 
     }
