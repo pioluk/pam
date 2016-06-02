@@ -96,7 +96,7 @@ namespace Pam
         {
             foreach (Face face in detectedFaces)
             {
-                if (face.InUse)
+                if (face.TimesUnused < 4)
                 {
                     face.Artifact.draw(g, face.RectFilter.Rectangle);
                 }
