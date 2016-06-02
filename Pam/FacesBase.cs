@@ -72,7 +72,7 @@ namespace Pam
             {
                 using (Bitmap faceBitmap = frame.Clone(faceRect, frame.PixelFormat))
                 {
-                    ulong bestFactor = 10000;
+                    double bestFactor = 1000;
                     Face bestFace = null;
 
                     foreach (Face face in detectedFaces)
@@ -80,7 +80,7 @@ namespace Pam
                         if (face.InUse)
                             continue;
 
-                        ulong factor = distanceFactor(face, faceRect);
+                        double factor = distanceFactor(face, faceRect);
 
                         if (factor < bestFactor)
                         {
@@ -106,9 +106,9 @@ namespace Pam
             }
         }
 
-        private static ulong distanceFactor(Face face, Rectangle rect)
+        private static double distanceFactor(Face face, Rectangle rect)
         {
-            return rectsDistance(face.RectFilter.Rectangle, rect);
+            return rectsDistance(face.RectFilter.Rectangle, rect) / Math.Sqrt(face.RectFilter.Rectangle.Width * face.RectFilter.Rectangle.Height);
         }
 
         private static ulong rectsDistance(Rectangle a, Rectangle b)
