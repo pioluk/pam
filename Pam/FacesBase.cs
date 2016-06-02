@@ -21,7 +21,10 @@ namespace Pam
 
         public void Clear()
         {
-            detectedFaces.Clear();
+            List<Face> oldList = detectedFaces;
+            detectedFaces = new List<Face>();
+            foreach(Face face in oldList)
+                face.Dispose();
         }
 
         private IArtifact RandomArtifact()
