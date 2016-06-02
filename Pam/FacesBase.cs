@@ -19,6 +19,8 @@ namespace Pam
 
         private List<Face> detectedFaces = new List<Face>();
 
+        private int nextFaceId = 1;
+
         public void Clear()
         {
             List<Face> oldList = detectedFaces;
@@ -94,11 +96,13 @@ namespace Pam
 
         public void DrawArtifacts(Graphics g)
         {
+            Font font = new Font("Comic Sans MS", 48);
             foreach (Face face in detectedFaces)
             {
                 if (face.InUse)
                 {
                     face.Artifact.draw(g, face.RectFilter.Rectangle);
+                    g.DrawString(String.Format("#{0}", face.Id), font, Brushes.Blue, face.RectFilter.Rectangle.X, face.RectFilter.Rectangle.Y);
                 }
             }
         }
@@ -156,7 +160,7 @@ namespace Pam
                 else
                 {
                     IArtifact artifact = RandomArtifact();
-                    Face newFace = new Face { TimesUnused = 0, Bitmap = faceBitmap, Artifact = artifact };
+                    Face newFace = new Face { Id = nextFaceId++, TimesUnused = 0, Bitmap = faceBitmap, Artifact = artifact };
                     newFace.RectFilter.add(faceRect);
                     detectedFaces.Add(newFace);
                 }
