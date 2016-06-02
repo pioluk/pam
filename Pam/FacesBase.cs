@@ -101,7 +101,7 @@ namespace Pam
             {
                 if (face.InUse)
                 {
-                    face.Artifact.draw(g, face.RectFilter.Rectangle);
+                    //face.Artifact.draw(g, face.RectFilter.Rectangle);
                     g.DrawString(String.Format("#{0}", face.Id), font, Brushes.Blue, face.RectFilter.Rectangle.X, face.RectFilter.Rectangle.Y);
                 }
             }
