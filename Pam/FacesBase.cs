@@ -68,6 +68,8 @@ namespace Pam
             {
                 using (Bitmap faceBitmap = frame.Clone(new Rectangle(faceRect.Location, faceRect.Size), frame.PixelFormat))
                 {
+                    float[] hist = calcHistogram(faceBitmap);
+
                     float bestFactor = 1e3f;
                     Face bestFace = null;
 
@@ -76,7 +78,7 @@ namespace Pam
                         if (face.InUse)
                             continue;
 
-                        float factor = 0;
+                        float factor = compareHistograms(hist, face.histogram);
 
                         if (factor < bestFactor)
                         {
@@ -89,17 +91,69 @@ namespace Pam
                     {
                         bestFace.InUse = true;
                         bestFace.TimesUnused = 0;
+                        bestFace.histogram = hist;
                         bestFace.RectFilter.add(faceRect);
                     }
                     else
                     {
                         IArtifact artifact = RandomArtifact();
-                        Face newFace = new Face { TimesUnused = 0, Artifact = artifact };
+                        Face newFace = new Face { TimesUnused = 0, Artifact = artifact, histogram = hist };
                         newFace.RectFilter.add(faceRect);
                         detectedFaces.Add(newFace);
                     }
                 }
             }
+        }
+
+        private static unsafe float[] calcHistogram(Bitmap image)
+        {
+            BitmapData data = image.LockBits(new Rectangle(Point.Empty, image.Size), ImageLockMode.ReadOnly, PixelFormat.Format24bppRgb);
+
+            int[] hist = new int[Face.HIST_LEN];
+
+            byte* pixels = (byte*)data.Scan0.ToPointer();
+
+            for(int y = 0; y < data.Height; ++y)
+            {
+                byte* pix = pixels;
+                for(int x = 0; x < data.Width; ++x)
+                {
+                    uint r = (uint)pix[0] >> (8 - Face.HIST_CH_BITS);
+                    uint g = (uint)pix[1] >> (8 - Face.HIST_CH_BITS);
+                    uint b = (uint)pix[2] >> (8 - Face.HIST_CH_BITS);
+
+                    uint v = r | (g << Face.HIST_CH_BITS) | (b << (Face.HIST_CH_BITS * 2));
+
+                    hist[v]++;
+
+                    pix += 3;
+                }
+                pixels += data.Stride;
+            }
+
+            float imgSize = data.Width * data.Height;
+
+            image.UnlockBits(data);
+
+            float[] norm_hist = new float[Face.HIST_LEN];
+            for(int i = 0; i < hist.Length; ++i)
+            {
+                norm_hist[i] = hist[i] / imgSize;
+            }
+            return norm_hist;
+        }
+
+        private static float compareHistograms(float[] h1, float[] h2)
+        {
+            float mse = 0f;
+
+            for(int i = 0; i < Face.HIST_LEN; ++i)
+            {
+                float diff = h1[i] - h2[i];
+                mse += diff * diff;
+            }
+
+            return mse;
         }
 
     }
