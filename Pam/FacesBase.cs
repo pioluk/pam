@@ -66,39 +66,38 @@ namespace Pam
 
             foreach (Rectangle faceRect in faceRects)
             {
-                Bitmap faceBitmap = frame.Clone(new Rectangle(faceRect.Location, faceRect.Size), frame.PixelFormat);
-
-                float bestFactor = 1e3f;
-                Face bestFace = null;
-
-                foreach (Face face in detectedFaces)
+                using (Bitmap faceBitmap = frame.Clone(new Rectangle(faceRect.Location, faceRect.Size), frame.PixelFormat))
                 {
-                    if (face.InUse)
-                        continue;
+                    float bestFactor = 1e3f;
+                    Face bestFace = null;
 
-                    float factor = 0;
-
-                    if (factor < bestFactor)
+                    foreach (Face face in detectedFaces)
                     {
-                        bestFactor = factor;
-                        bestFace = face;
-                    }
-                }
+                        if (face.InUse)
+                            continue;
 
-                if (bestFace != null)
-                {
-                    bestFace.InUse = true;
-                    bestFace.TimesUnused = 0;
-                    bestFace.RectFilter.add(faceRect);
-                    bestFace.Bitmap.Dispose();
-                    bestFace.Bitmap = faceBitmap;
-                }
-                else
-                {
-                    IArtifact artifact = RandomArtifact();
-                    Face newFace = new Face { TimesUnused = 0, Bitmap = faceBitmap, Artifact = artifact };
-                    newFace.RectFilter.add(faceRect);
-                    detectedFaces.Add(newFace);
+                        float factor = 0;
+
+                        if (factor < bestFactor)
+                        {
+                            bestFactor = factor;
+                            bestFace = face;
+                        }
+                    }
+
+                    if (bestFace != null)
+                    {
+                        bestFace.InUse = true;
+                        bestFace.TimesUnused = 0;
+                        bestFace.RectFilter.add(faceRect);
+                    }
+                    else
+                    {
+                        IArtifact artifact = RandomArtifact();
+                        Face newFace = new Face { TimesUnused = 0, Artifact = artifact };
+                        newFace.RectFilter.add(faceRect);
+                        detectedFaces.Add(newFace);
+                    }
                 }
             }
         }
