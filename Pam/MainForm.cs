@@ -17,7 +17,7 @@ namespace Pam
         private VSourceDlg vSourceDlg = new VSourceDlg();
 
         private bool playing = false;
-        private bool mirror = true;
+        private bool mirror = false;
 
         private volatile int frameCount = 0;
 
