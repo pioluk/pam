@@ -1,7 +1,6 @@
 ﻿using AForge.Video;
 using NatLib;
 using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Windows.Forms;
@@ -20,20 +19,11 @@ namespace Pam
         private bool playing = false;
         private bool mirror = true;
 
-        private readonly IArtifact[] availableArtifacts =
-        {
-            new SombreroArtifact(),
-            new SunglassesArtifact(),
-            new MoustacheArtifact()
-        };
-
         private volatile int frameCount = 0;
-
-        private List<Face> detectedFaces = new List<Face>();
 
         private Timer timer = new Timer();
 
-        private Random rng = new Random();
+        private FacesBase facesBase = new FacesBase();
 
         public MainForm()
         {
@@ -102,83 +92,20 @@ namespace Pam
             mirror = checkMirror.Checked;
         }
 
-        private IArtifact RandomArtifact()
-        {
-            int index = rng.Next(0, availableArtifacts.Length);
-            return availableArtifacts[index];
-        }
-
-        private float MeanSquareError(Bitmap previousFrame, Bitmap frame)
-        {
-            Bitmap scaledPreviousFrame = previousFrame;
-            bool clonedPrevFrame = false;
-
-            if (previousFrame.Size != frame.Size)
-            {
-                scaledPreviousFrame = new Bitmap(previousFrame, frame.Size);
-                clonedPrevFrame = true;
-            }
-
-            ulong sum = 0;
-
-            BitmapData previousFrameData = scaledPreviousFrame.LockBits(new Rectangle(Point.Empty, scaledPreviousFrame.Size), ImageLockMode.ReadOnly, PixelFormat.Format24bppRgb);
-            BitmapData frameData = frame.LockBits(new Rectangle(Point.Empty, frame.Size), ImageLockMode.ReadOnly, PixelFormat.Format24bppRgb);
-
-            int width3 = frameData.Width * 3;
-            int height = frameData.Height;
-
-            unsafe
-            {
-                byte* previousPixels = (byte*)previousFrameData.Scan0.ToPointer();
-                byte* pixels = (byte*)frameData.Scan0.ToPointer();
-
-                for (int y = 0; y < height; ++y)
-                {
-                    byte* pp = previousPixels;
-                    byte* p = pixels;
-
-                    for (int x = 0; x < width3; ++x)
-                    {
-                        byte pVal = *pp;
-                        byte val = *p;
-
-                        long diff = pVal - val;
-                        long sd = diff * diff;
-
-                        sum += (ulong)sd;
-
-                        ++pp;
-                        ++p;
-                    }
-
-                    previousPixels += previousFrameData.Stride;
-                    pixels += frameData.Stride;
-                }
-            }
-
-            scaledPreviousFrame.UnlockBits(previousFrameData);
-            frame.UnlockBits(frameData);
-
-            if(clonedPrevFrame)
-            {
-                scaledPreviousFrame.Dispose();
-            }
-
-            return ((float)sum) / (width3 * height);
-        }
+        
 
         private void VideoPlayer_NewFrame(object sender, ref Bitmap frame)
         {
             try
             {
                 Rectangle[] faces = DetectFaces(frame);
-                UpdateFacesInfo(frame, faces);
+                facesBase.UpdateFacesInfo(frame, faces);
             }
             catch (Exception) { }
 
             using (Graphics g = Graphics.FromImage(frame))
             {
-                DrawArtifacts(g);
+                facesBase.DrawArtifacts(g);
             }
 
             if (mirror)
@@ -187,73 +114,6 @@ namespace Pam
             }
 
             ++frameCount;
-        }
-
-        private void DrawArtifacts(Graphics g)
-        {
-            foreach(Face face in detectedFaces)
-            {
-                if(face.InUse)
-                {
-                    face.Artifact.draw(g, face.RectFilter.Rectangle);
-                }
-            }
-        }
-
-        private void UpdateFacesInfo(Bitmap frame, Rectangle[] faceRects)
-        {
-            detectedFaces.ForEach(f => f.InUse = false);
-
-            if (faceRects == null || faceRects.Length == 0)
-                return;
-
-            foreach (Rectangle faceRect in faceRects)
-            {
-                Bitmap faceBitmap = frame.Clone(new Rectangle(faceRect.Location, faceRect.Size), frame.PixelFormat);
-
-                float bestFactor = 1e3f;
-                Face bestFace = null;
-
-                foreach (Face face in detectedFaces)
-                {
-                    if (face.InUse)
-                        continue;
-
-                    if (face.TimesUnused > 100)
-                    {
-                        detectedFaces.Remove(face);
-                        face.Dispose();
-                        continue;
-                    }
-
-                    ++face.TimesUnused;
-
-                    float mse = MeanSquareError(face.Bitmap, faceBitmap);
-                    float factor = mse / (faceBitmap.Width * faceBitmap.Height) * 100f;
-
-                    if (factor < bestFactor && factor < 15f)
-                    {
-                        bestFactor = factor;
-                        bestFace = face;
-                    }
-                }
-
-                if (bestFace != null)
-                {
-                    bestFace.InUse = true;
-                    bestFace.TimesUnused = 0;
-                    bestFace.RectFilter.add(faceRect);
-                    bestFace.Bitmap.Dispose();
-                    bestFace.Bitmap = faceBitmap;
-                }
-                else
-                {
-                    IArtifact artifact = RandomArtifact();
-                    Face newFace = new Face { TimesUnused = 0, Bitmap = faceBitmap, Artifact = artifact };
-                    newFace.RectFilter.add(faceRect);
-                    detectedFaces.Add(newFace);
-                }
-            }
         }
 
         private void FPSCount(object sender, EventArgs args)
@@ -277,7 +137,7 @@ namespace Pam
 
         private void btnClearFaces_Click(object sender, EventArgs e)
         {
-            detectedFaces.Clear();
+            facesBase.Clear();
         }
     }
 }
