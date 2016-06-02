@@ -102,7 +102,20 @@ namespace Pam
 
         public void UpdateFacesInfo(Bitmap frame, Rectangle[] faceRects)
         {
-            detectedFaces.ForEach(f => f.InUse = false);
+            detectedFaces.ForEach((Face face) => {
+                face.InUse = false;
+                ++face.TimesUnused;
+            });
+
+            detectedFaces.RemoveAll((Face face) =>
+            {
+                if(face.TimesUnused > 100)
+                {
+                    face.Dispose();
+                    return true;
+                }
+                return false;
+            });
 
             if (faceRects == null || faceRects.Length == 0)
                 return;
@@ -118,15 +131,6 @@ namespace Pam
                 {
                     if (face.InUse)
                         continue;
-
-                    if (face.TimesUnused > 100)
-                    {
-                        detectedFaces.Remove(face);
-                        face.Dispose();
-                        continue;
-                    }
-
-                    ++face.TimesUnused;
 
                     float mse = MeanSquareError(face.Bitmap, faceBitmap);
                     float factor = mse;
