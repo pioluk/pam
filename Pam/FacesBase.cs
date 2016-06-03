@@ -21,6 +21,8 @@ namespace Pam
 
         private int nextFaceId = 1;
 
+        public bool drawId = false;
+
         public void Clear()
         {
             List<Face> oldList = detectedFaces;
@@ -101,8 +103,10 @@ namespace Pam
             {
                 if (face.InUse)
                 {
-                    //face.Artifact.draw(g, face.RectFilter.Rectangle);
-                    g.DrawString(String.Format("#{0}", face.Id), font, Brushes.Blue, face.RectFilter.Rectangle.X, face.RectFilter.Rectangle.Y);
+                    if(drawId)
+                        g.DrawString(String.Format("#{0}", face.Id), font, Brushes.Blue, face.RectFilter.Rectangle.X, face.RectFilter.Rectangle.Y);
+                    else
+                        face.Artifact.draw(g, face.RectFilter.Rectangle);
                 }
             }
         }
