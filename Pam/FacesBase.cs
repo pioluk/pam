@@ -39,12 +39,6 @@ namespace Pam
                 face.Dispose();
         }
 
-        private IArtifact RandomArtifact()
-        {
-            int index = rng.Next(0, availableArtifacts.Length);
-            return availableArtifacts[index];
-        }
-
         public void DrawArtifacts(Graphics g)
         {
             foreach (Face face in detectedFaces)
@@ -121,6 +115,12 @@ namespace Pam
             }
         }
 
+        private IArtifact RandomArtifact()
+        {
+            int index = rng.Next(0, availableArtifacts.Length);
+            return availableArtifacts[index];
+        }
+
         private static unsafe float[] calcHistogram(Bitmap image)
         {
             BitmapData data = image.LockBits(new Rectangle(Point.Empty, image.Size), ImageLockMode.ReadOnly, PixelFormat.Format24bppRgb);
@@ -163,7 +163,7 @@ namespace Pam
         {
             double mse = 0f;
 
-            for(int i = 0; i < Face.HIST_LEN; ++i)
+            for (int i = 0; i < Face.HIST_LEN; ++i)
             {
                 float diff = h1[i] - h2[i];
                 mse += diff * diff;
