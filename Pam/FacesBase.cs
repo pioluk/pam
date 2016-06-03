@@ -92,8 +92,8 @@ namespace Pam
                             continue;
 
                         float mini_mse = MeanSquareError(face.Mini, miniFace);
-                        double hist_cmp = compareHistograms(hist, face.histogram);
-                        double dist = distanceFactor(face, faceRect);
+                        double hist_cmp = compareHistograms(hist, face.histogram) * 1000;
+                        double dist = distanceFactor(face, faceRect) * 25;
 
                         double factor = mini_mse + hist_cmp + dist;
 
