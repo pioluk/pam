@@ -9,10 +9,12 @@ namespace Pam
         public int TimesUnused { get; set; }
         public IArtifact Artifact { get; set; }
         public bool InUse { get; set; } = false;
+        public Bitmap Mini;
         public RectFilter RectFilter = new RectFilter();
 
         public void Dispose()
         {
+            Mini.Dispose();
         }
     }
 }

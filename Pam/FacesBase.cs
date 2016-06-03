@@ -74,8 +74,11 @@ namespace Pam
 
             foreach (Rectangle faceRect in faceRects)
             {
-                using (Bitmap faceBitmap = frame.Clone(faceRect, frame.PixelFormat))
+                Rectangle modFaceRect = new Rectangle(faceRect.X + faceRect.Width / 4, faceRect.Y, faceRect.Width / 2, faceRect.Height);
+                using (Bitmap faceBitmap = frame.Clone(modFaceRect, frame.PixelFormat))
                 {
+                    Bitmap miniFace = new Bitmap(faceBitmap, new Size(16, 16));
+
                     float bestFactor = 1e3f;
                     Face bestFace = null;
 
@@ -98,11 +101,13 @@ namespace Pam
                         bestFace.InUse = true;
                         bestFace.TimesUnused = 0;
                         bestFace.RectFilter.add(faceRect);
+                        bestFace.Mini.Dispose();
+                        bestFace.Mini = miniFace;
                     }
                     else
                     {
                         IArtifact artifact = RandomArtifact();
-                        Face newFace = new Face { Id = nextFaceId++, TimesUnused = 0, Artifact = artifact };
+                        Face newFace = new Face { Id = nextFaceId++, TimesUnused = 0, Artifact = artifact, Mini = miniFace };
                         newFace.RectFilter.add(faceRect);
                         detectedFaces.Add(newFace);
                     }
