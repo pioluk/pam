@@ -33,6 +33,7 @@
             this.btnStartStop = new System.Windows.Forms.Button();
             this.checkMirror = new System.Windows.Forms.CheckBox();
             this.btnClearFaces = new System.Windows.Forms.Button();
+            this.checkID = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // videoPlayer
@@ -61,8 +62,6 @@
             // 
             this.checkMirror.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.checkMirror.AutoSize = true;
-            this.checkMirror.Checked = true;
-            this.checkMirror.CheckState = System.Windows.Forms.CheckState.Checked;
             this.checkMirror.Location = new System.Drawing.Point(93, 419);
             this.checkMirror.Name = "checkMirror";
             this.checkMirror.Size = new System.Drawing.Size(55, 17);
@@ -82,11 +81,23 @@
             this.btnClearFaces.UseVisualStyleBackColor = true;
             this.btnClearFaces.Click += new System.EventHandler(this.btnClearFaces_Click);
             // 
+            // checkID
+            // 
+            this.checkID.AutoSize = true;
+            this.checkID.Location = new System.Drawing.Point(154, 419);
+            this.checkID.Name = "checkID";
+            this.checkID.Size = new System.Drawing.Size(37, 17);
+            this.checkID.TabIndex = 3;
+            this.checkID.Text = "ID";
+            this.checkID.UseVisualStyleBackColor = true;
+            this.checkID.CheckedChanged += new System.EventHandler(this.checkID_CheckedChanged);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(568, 450);
+            this.Controls.Add(this.checkID);
             this.Controls.Add(this.btnClearFaces);
             this.Controls.Add(this.btnStartStop);
             this.Controls.Add(this.checkMirror);
@@ -105,6 +116,7 @@
         private System.Windows.Forms.Button btnStartStop;
         private System.Windows.Forms.CheckBox checkMirror;
         private System.Windows.Forms.Button btnClearFaces;
+        private System.Windows.Forms.CheckBox checkID;
     }
 }
 
