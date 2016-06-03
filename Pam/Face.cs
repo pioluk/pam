@@ -5,15 +5,18 @@ namespace Pam
 {
     internal class Face : IDisposable
     {
-        public int Id;
-        public int TimesUnused { get; set; }
-        public IArtifact Artifact { get; set; }
-        public bool InUse { get; set; } = false;
+        public int Id = 0;
+        public int TimesUnused = 0;
+        public Bitmap Bitmap = null;
+        public IArtifact Artifact = null;
+        public bool InUse = false;
         public float[] histogram;
         public RectFilter RectFilter = new RectFilter();
 
         public void Dispose()
         {
+            if(Bitmap != null)
+                Bitmap.Dispose();
         }
     }
 }
