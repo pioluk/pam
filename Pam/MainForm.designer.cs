@@ -83,6 +83,7 @@
             // 
             // checkID
             // 
+            this.checkID.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.checkID.AutoSize = true;
             this.checkID.Location = new System.Drawing.Point(154, 419);
             this.checkID.Name = "checkID";
