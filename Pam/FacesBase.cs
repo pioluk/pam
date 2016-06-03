@@ -39,12 +39,6 @@ namespace Pam
                 face.Dispose();
         }
 
-        private IArtifact RandomArtifact()
-        {
-            int index = rng.Next(0, availableArtifacts.Length);
-            return availableArtifacts[index];
-        }
-
         public void DrawArtifacts(Graphics g)
         {
             foreach (Face face in detectedFaces)
@@ -115,6 +109,12 @@ namespace Pam
                     }
                 }
             }
+        }
+
+        private IArtifact RandomArtifact()
+        {
+            int index = rng.Next(0, availableArtifacts.Length);
+            return availableArtifacts[index];
         }
 
         private static double distanceFactor(Face face, Rectangle rect)
