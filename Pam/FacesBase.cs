@@ -23,6 +23,8 @@ namespace Pam
 
         public bool drawId = false;
 
+        Font font = new Font("Comic Sans MS", 48);
+
         public void Clear()
         {
             List<Face> oldList = detectedFaces;
@@ -98,7 +100,6 @@ namespace Pam
 
         public void DrawArtifacts(Graphics g)
         {
-            Font font = new Font("Comic Sans MS", 48);
             foreach (Face face in detectedFaces)
             {
                 if (face.InUse)
