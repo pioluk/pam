@@ -74,7 +74,8 @@ namespace Pam
 
             foreach (Rectangle faceRect in faceRects)
             {
-                using (Bitmap faceBitmap = frame.Clone(faceRect, frame.PixelFormat))
+                Rectangle modFaceRect = new Rectangle(faceRect.X + faceRect.Width / 4, faceRect.Y, faceRect.Width / 2, faceRect.Height);
+                using (Bitmap faceBitmap = frame.Clone(modFaceRect, frame.PixelFormat))
                 {
                     float[] hist = calcHistogram(faceBitmap);
 
