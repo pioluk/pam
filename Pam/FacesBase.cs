@@ -118,7 +118,9 @@ namespace Pam
         {
             BitmapData data = image.LockBits(new Rectangle(Point.Empty, image.Size), ImageLockMode.ReadOnly, PixelFormat.Format24bppRgb);
 
-            int[] hist = new int[Face.HIST_LEN];
+            const int HIST_LEN = 360;
+
+            int[] hist = new int[HIST_LEN];
 
             byte* pixels = (byte*)data.Scan0.ToPointer();
 
@@ -127,13 +129,13 @@ namespace Pam
                 byte* pix = pixels;
                 for(int x = 0; x < data.Width; ++x)
                 {
-                    uint r = (uint)pix[0] >> (8 - Face.HIST_CH_BITS);
-                    uint g = (uint)pix[1] >> (8 - Face.HIST_CH_BITS);
-                    uint b = (uint)pix[2] >> (8 - Face.HIST_CH_BITS);
+                    int r = (int)(uint)pix[0];
+                    int g = (int)(uint)pix[1];
+                    int b = (int)(uint)pix[2];
 
-                    uint v = r | (g << Face.HIST_CH_BITS) | (b << (Face.HIST_CH_BITS * 2));
-
-                    hist[v]++;
+                    int h = rgb2hsv_hue(r, g, b);
+                    if(h >= 0)
+                        hist[h]++;
 
                     pix += 3;
                 }
@@ -144,7 +146,7 @@ namespace Pam
 
             image.UnlockBits(data);
 
-            float[] norm_hist = new float[Face.HIST_LEN];
+            float[] norm_hist = new float[HIST_LEN];
             for(int i = 0; i < hist.Length; ++i)
             {
                 norm_hist[i] = hist[i] / imgSize;
@@ -156,13 +158,38 @@ namespace Pam
         {
             double mse = 0f;
 
-            for(int i = 0; i < Face.HIST_LEN; ++i)
+            for(int i = 0; i < h1.Length; ++i)
             {
                 float diff = h1[i] - h2[i];
                 mse += diff * diff;
             }
 
             return mse;
+        }
+
+        private static int rgb2hsv_hue(int r, int g, int b)
+        {
+            int min = Math.Min(r, Math.Min(g, b));
+            int max = Math.Max(r, Math.Max(g, b));
+            int span = max - min;
+
+            int hue;
+
+            if (min == max)
+                return -1;
+
+            if (r == max)
+                hue = 0 + (g - b) * 60 / span;
+            else if (g == max)
+                hue = 120 + (b - g) * 60 / span;
+            else
+                hue = 240 + (r - g) * 60 / span;
+
+            while (hue < 0)
+                hue += 360;
+
+            return hue;
+
         }
 
     }
