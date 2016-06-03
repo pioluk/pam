@@ -80,7 +80,9 @@ namespace Pam
                 {
                     Bitmap miniFace = new Bitmap(faceBitmap, new Size(16, 16));
 
-                    float bestFactor = 1e3f;
+                    float[] hist = calcHistogram(faceBitmap);
+
+                    double bestFactor = 1e3f;
                     Face bestFace = null;
 
                     foreach (Face face in detectedFaces)
@@ -88,7 +90,11 @@ namespace Pam
                         if (face.InUse)
                             continue;
 
-                        float factor = MeanSquareError(face.Mini, miniFace);
+                        float mini_mse = MeanSquareError(face.Mini, miniFace);
+
+                        double hist_cmp = compareHistograms(hist, face.histogram);
+
+                        double factor = mini_mse + hist_cmp;
 
                         if (factor < bestFactor)
                         {
@@ -101,6 +107,7 @@ namespace Pam
                     {
                         bestFace.InUse = true;
                         bestFace.TimesUnused = 0;
+                        bestFace.histogram = hist;
                         bestFace.RectFilter.add(faceRect);
                         bestFace.Mini.Dispose();
                         bestFace.Mini = miniFace;
@@ -108,7 +115,7 @@ namespace Pam
                     else
                     {
                         IArtifact artifact = RandomArtifact();
-                        Face newFace = new Face { Id = nextFaceId++, TimesUnused = 0, Artifact = artifact, Mini = miniFace };
+                        Face newFace = new Face { Id = nextFaceId++, TimesUnused = 0, Artifact = artifact, Mini = miniFace, histogram = hist };
                         newFace.RectFilter.add(faceRect);
                         detectedFaces.Add(newFace);
                     }
@@ -165,6 +172,92 @@ namespace Pam
             frame.UnlockBits(frameData);
 
             return ((float)sum) / (width3 * height);
+        }
+
+        private static unsafe float[] calcHistogram(Bitmap image)
+        {
+            BitmapData data = image.LockBits(new Rectangle(Point.Empty, image.Size), ImageLockMode.ReadOnly, PixelFormat.Format24bppRgb);
+
+            const int HIST_LEN = 72;
+
+            int[] hist = new int[HIST_LEN];
+
+            byte* pixels = (byte*)data.Scan0.ToPointer();
+
+            for(int y = 0; y < data.Height; ++y)
+            {
+                byte* pix = pixels;
+                for(int x = 0; x < data.Width; ++x)
+                {
+                    int r = (int)(uint)pix[0];
+                    int g = (int)(uint)pix[1];
+                    int b = (int)(uint)pix[2];
+
+                    int h = rgb2hsv_hue(r, g, b);
+                    if(h >= 0)
+                        hist[h]++;
+
+                    pix += 3;
+                }
+                pixels += data.Stride;
+            }
+
+            float imgSize = data.Width * data.Height;
+
+            image.UnlockBits(data);
+
+            float[] norm_hist = new float[HIST_LEN];
+            for(int i = 0; i < hist.Length; ++i)
+            {
+                norm_hist[i] = hist[i] / imgSize;
+            }
+            return norm_hist;
+        }
+
+        private static double compareHistograms(float[] h1, float[] h2)
+        {
+            double mse = 0f;
+
+            for(int i = 0; i < h1.Length - 1; ++i)
+            {
+                float s1 = h1[i] + h1[i + 1];
+                float s2 = h2[i] + h2[i + 1];
+                float diff = s1 - s2;
+                mse += diff * diff;
+            }
+
+            float ls1 = h1[h1.Length - 1] + h1[0];
+            float ls2 = h2[h2.Length - 1] + h2[0];
+            float ldiff = ls1 - ls2;
+            mse += ldiff * ldiff;
+
+            return mse;
+        }
+
+        private static int rgb2hsv_hue(int r, int g, int b)
+        {
+            int min = Math.Min(r, Math.Min(g, b));
+            int max = Math.Max(r, Math.Max(g, b));
+            int span = max - min;
+
+            int hue;
+
+            if (min == max)
+                return -1;
+
+            if (r == max)
+                hue = 0 + (g - b) * 12 / span;
+            else if (g == max)
+                hue = 24 + (b - g) * 12 / span;
+            else
+                hue = 48 + (r - g) * 12 / span;
+
+            while (hue < 0)
+                hue += 72;
+            while (hue >= 72)
+                hue -= 72;
+
+            return hue;
         }
 
     }
