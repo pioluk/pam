@@ -38,6 +38,8 @@ namespace Pam
         private void AtDispose()
         {
             Stop();
+            timer.Dispose();
+            facesBase.Dispose();
         }
 
         private void Stop()

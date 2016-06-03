@@ -5,7 +5,7 @@ using System.Drawing.Imaging;
 
 namespace Pam
 {
-    class FacesBase
+    class FacesBase : IDisposable
     {
 
         private static readonly IArtifact[] availableArtifacts =
@@ -22,6 +22,14 @@ namespace Pam
         private int nextFaceId = 1;
 
         public bool drawId = false;
+
+        Font font = new Font("Comic Sans MS", 48);
+
+        public void Dispose()
+        {
+            font.Dispose();
+            Clear();
+        }
 
         public void Clear()
         {
@@ -98,7 +106,6 @@ namespace Pam
 
         public void DrawArtifacts(Graphics g)
         {
-            Font font = new Font("Comic Sans MS", 48);
             foreach (Face face in detectedFaces)
             {
                 if (face.TimesUnused < 4)
