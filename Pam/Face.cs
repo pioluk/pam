@@ -5,6 +5,7 @@ namespace Pam
 {
     internal class Face : IDisposable
     {
+        public int Id;
         public int TimesUnused { get; set; }
         public Bitmap Bitmap { get; set; }
         public IArtifact Artifact { get; set; }

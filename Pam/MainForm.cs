@@ -17,7 +17,7 @@ namespace Pam
         private VSourceDlg vSourceDlg = new VSourceDlg();
 
         private bool playing = false;
-        private bool mirror = true;
+        private bool mirror = false;
 
         private volatile int frameCount = 0;
 
@@ -92,7 +92,10 @@ namespace Pam
             mirror = checkMirror.Checked;
         }
 
-        
+        private void checkID_CheckedChanged(object sender, EventArgs e)
+        {
+            facesBase.drawId = checkID.Checked;
+        }
 
         private void VideoPlayer_NewFrame(object sender, ref Bitmap frame)
         {
@@ -139,5 +142,6 @@ namespace Pam
         {
             facesBase.Clear();
         }
+
     }
 }
