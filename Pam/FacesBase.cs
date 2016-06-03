@@ -118,7 +118,7 @@ namespace Pam
         {
             BitmapData data = image.LockBits(new Rectangle(Point.Empty, image.Size), ImageLockMode.ReadOnly, PixelFormat.Format24bppRgb);
 
-            const int HIST_LEN = 360;
+            const int HIST_LEN = 36;
 
             int[] hist = new int[HIST_LEN];
 
@@ -179,14 +179,16 @@ namespace Pam
                 return -1;
 
             if (r == max)
-                hue = 0 + (g - b) * 60 / span;
+                hue = 0 + (g - b) * 6 / span;
             else if (g == max)
-                hue = 120 + (b - g) * 60 / span;
+                hue = 12 + (b - g) * 6 / span;
             else
-                hue = 240 + (r - g) * 60 / span;
+                hue = 24 + (r - g) * 6 / span;
 
             while (hue < 0)
-                hue += 360;
+                hue += 36;
+            while (hue >= 36)
+                hue -= 36;
 
             return hue;
 
