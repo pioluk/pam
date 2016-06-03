@@ -17,6 +17,7 @@ namespace Pam
         private VSourceDlg vSourceDlg = new VSourceDlg();
 
         private bool playing = false;
+        private bool closing = false;
         private bool mirror = false;
 
         private volatile int frameCount = 0;
@@ -35,9 +36,16 @@ namespace Pam
             timer.Tick += FPSCount;
         }
 
-        private void AtDispose()
+        private void AtDispose1()
         {
+            closing = true;
             Stop();
+            timer.Dispose();
+        }
+
+        private void AtDispose2()
+        {
+            facesBase.Dispose();
         }
 
         private void Stop()
@@ -99,6 +107,9 @@ namespace Pam
 
         private void VideoPlayer_NewFrame(object sender, ref Bitmap frame)
         {
+            if (closing)
+                return;
+
             try
             {
                 Rectangle[] faces = DetectFaces(frame);
