@@ -83,6 +83,7 @@ namespace Pam
                     float[] hist = calcHistogram(faceBitmap);
 
                     double bestFactor = 1e3f;
+
                     Face bestFace = null;
 
                     foreach (Face face in detectedFaces)
@@ -91,10 +92,10 @@ namespace Pam
                             continue;
 
                         float mini_mse = MeanSquareError(face.Mini, miniFace);
-
                         double hist_cmp = compareHistograms(hist, face.histogram);
+                        double dist = distanceFactor(face, faceRect);
 
-                        double factor = mini_mse + hist_cmp;
+                        double factor = mini_mse + hist_cmp + dist;
 
                         if (factor < bestFactor)
                         {
@@ -258,6 +259,43 @@ namespace Pam
                 hue -= 72;
 
             return hue;
+        }
+
+        private static double distanceFactor(Face face, Rectangle rect)
+        {
+            return (rectsDistance(face.RectFilter.Rectangle, rect) + squaredCentersDistance(face.RectFilter.Rectangle, rect)) / Math.Sqrt(face.RectFilter.Rectangle.Width * face.RectFilter.Rectangle.Height);
+        }
+
+        private static ulong rectsDistance(Rectangle a, Rectangle b)
+        {
+            int dl = a.Left - b.Left;
+            int dr = a.Right - b.Right;
+            int dt = a.Top - b.Top;
+            int db = a.Bottom - b.Bottom;
+            ulong ll = (ulong)(dl * dl);
+            ulong rr = (ulong)(dr * dr);
+            ulong tt = (ulong)(dt * dt);
+            ulong bb = (ulong)(db * db);
+            return ll + rr + tt + bb;
+        }
+
+        private static ulong squaredCentersDistance(Rectangle a, Rectangle b)
+        {
+            return squaredDistance(rectCenter(a), rectCenter(b));
+        }
+
+        private static Point rectCenter(Rectangle rect)
+        {
+            return new Point(rect.X + rect.Width / 2, rect.Y + rect.Height / 2);
+        }
+
+        private static ulong squaredDistance(Point a, Point b)
+        {
+            int dx = a.X - b.X;
+            int dy = a.Y - b.Y;
+            ulong xx = (ulong)(dx * dx);
+            ulong yy = (ulong)(dy * dy);
+            return xx + yy;
         }
 
     }
