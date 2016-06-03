@@ -85,44 +85,43 @@ namespace Pam
                     hist = calcHistogram(faceBitmap);
                 }
 
-                    double bestFactor = 1e3f;
-                    Face bestFace = null;
+                double bestFactor = 1e3f;
+                Face bestFace = null;
 
-                    foreach (Face face in detectedFaces)
+                foreach (Face face in detectedFaces)
+                {
+                    if (face.InUse)
+                        continue;
+
+                    float mini_mse = MeanSquareError(face.Mini, miniFace);
+                    double hist_cmp = compareHistograms(hist, face.histogram) * 1000;
+                    double dist = distanceFactor(face, faceRect) * 25;
+
+                    double factor = mini_mse + hist_cmp + dist;
+
+                    if (factor < bestFactor)
                     {
-                        if (face.InUse)
-                            continue;
-
-                        float mini_mse = MeanSquareError(face.Mini, miniFace);
-                        double hist_cmp = compareHistograms(hist, face.histogram) * 1000;
-                        double dist = distanceFactor(face, faceRect) * 25;
-
-                        double factor = mini_mse + hist_cmp + dist;
-
-                        if (factor < bestFactor)
-                        {
-                            bestFactor = factor;
-                            bestFace = face;
-                        }
+                        bestFactor = factor;
+                        bestFace = face;
                     }
+                }
 
-                    if (bestFace != null)
-                    {
-                        bestFace.InUse = true;
-                        bestFace.TimesUnused = 0;
-                        bestFace.histogram = hist;
-                        bestFace.RectFilter.add(faceRect);
-                        bestFace.Mini.Dispose();
-                        bestFace.Mini = miniFace;
-                    }
-                    else
-                    {
-                        IArtifact artifact = RandomArtifact();
-                        Face newFace = new Face { Id = nextFaceId++, TimesUnused = 0, Artifact = artifact, Mini = miniFace, histogram = hist };
-                        newFace.RectFilter.add(faceRect);
-                        detectedFaces.Add(newFace);
-                    }
-                
+                if (bestFace != null)
+                {
+                    bestFace.InUse = true;
+                    bestFace.TimesUnused = 0;
+                    bestFace.histogram = hist;
+                    bestFace.RectFilter.add(faceRect);
+                    bestFace.Mini.Dispose();
+                    bestFace.Mini = miniFace;
+                }
+                else
+                {
+                    IArtifact artifact = RandomArtifact();
+                    Face newFace = new Face { Id = nextFaceId++, TimesUnused = 0, Artifact = artifact, Mini = miniFace, histogram = hist };
+                    newFace.RectFilter.add(faceRect);
+                    detectedFaces.Add(newFace);
+                }
             }
         }
 
