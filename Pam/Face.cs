@@ -9,6 +9,8 @@ namespace Pam
         public int TimesUnused = 0;
         public IArtifact Artifact = null;
         public bool InUse = false;
+        public double bestFactor;
+        public int bestRectIdx;
         public Bitmap Mini = null;
         public RectFilter RectFilter = new RectFilter();
 

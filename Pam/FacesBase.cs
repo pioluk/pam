@@ -57,6 +57,7 @@ namespace Pam
         {
             detectedFaces.ForEach((Face face) => {
                 face.InUse = false;
+                face.bestFactor = double.PositiveInfinity;
                 ++face.TimesUnused;
             });
 
@@ -73,18 +74,21 @@ namespace Pam
             if (faceRects == null || faceRects.Length == 0)
                 return;
 
-            foreach (Rectangle faceRect in faceRects)
+            Face[] bestFaces = new Face[faceRects.Length];
+
+            for (int ri = 0; ri < faceRects.Length; ++ri)
             {
+                if (bestFaces[ri] != null)
+                    continue;
+
+                Rectangle faceRect = faceRects[ri];
+
                 Bitmap miniFace;
                 Rectangle modFaceRect = new Rectangle(faceRect.X + faceRect.Width / 4, faceRect.Y, faceRect.Width / 2, faceRect.Height);
-
                 using (Bitmap faceBitmap = frame.Clone(modFaceRect, frame.PixelFormat))
                 {
                     miniFace = new Bitmap(faceBitmap, new Size(16, 16));
                 }
-
-                double bestFactor = 1;
-                Face bestFace = null;
 
                 foreach (Face face in detectedFaces)
                 {
@@ -92,17 +96,52 @@ namespace Pam
                         continue;
 
                     double dist = distanceFactor(face, faceRect);
-                    float mse = MeanSquareError(face.Mini, miniFace);
+                    //float mse = MeanSquareError(face.Mini, miniFace);
 
                     double factor = dist;
 
-                    if (factor < bestFactor)
+                    if (factor < face.bestFactor)
                     {
-                        bestFactor = factor;
-                        bestFace = face;
+                        face.bestFactor = factor;
+                        face.bestRectIdx = ri;
+                        bestFaces[ri] = face;
                     }
                 }
 
+            }
+
+            for (int ri = 0; ri < faceRects.Length; ++ri)
+            {
+                if (bestFaces[ri] != null)
+                {
+                    if (bestFaces[ri].bestRectIdx != ri)
+                        bestFaces[ri] = null;
+                    else
+                        bestFaces[ri].InUse = true;
+                }
+            }
+
+            foreach (Face face in detectedFaces)
+            {
+                if(face.InUse)
+                {
+                    face.TimesUnused = 0;
+                    face.RectFilter.add(faceRects[face.bestRectIdx]);
+                }
+            }
+
+            for (int ri = 0; ri < faceRects.Length; ++ri)
+            {
+                if(bestFaces[ri] == null)
+                {
+                    IArtifact artifact = RandomArtifact();
+                    Face newFace = new Face { Id = nextFaceId++, TimesUnused = 0, Artifact = artifact };
+                    newFace.RectFilter.add(faceRects[ri]);
+                    detectedFaces.Add(newFace);
+                }
+            }
+
+                /*
                 if (bestFace != null)
                 {
                     bestFace.InUse = true;
@@ -117,9 +156,8 @@ namespace Pam
                     Face newFace = new Face { Id = nextFaceId++, TimesUnused = 0, Artifact = artifact, Mini = miniFace };
                     newFace.RectFilter.add(faceRect);
                     detectedFaces.Add(newFace);
-                }
+                }*/
 
-            }
         }
 
         private IArtifact RandomArtifact()
