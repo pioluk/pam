@@ -259,9 +259,16 @@ namespace Pam
                         if(mse < 1000000)
                         {
                             if (a.Age < b.Age)
-                                toRemove.Add(a);
-                            else
-                                toRemove.Add(b);
+                            {
+                                Face t = a;
+                                a = b;
+                                b = t;
+                            }
+                            if(b.TimesUndetected < a.TimesUndetected)
+                            {
+                                a.RectFilter.add(b.RectFilter.Rectangle);
+                            }
+                            toRemove.Add(b);
                         }
                     }
                 }
