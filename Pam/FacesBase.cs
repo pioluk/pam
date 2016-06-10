@@ -126,6 +126,7 @@ namespace Pam
                 {
                     rectUsed[bestRectIdx] = true;
                     face.InUse = true;
+                    face.TimesUnused = 0;
                     face.RectFilter.add(faceRects[bestRectIdx]);
                     face.Mini.Dispose();
                     face.Mini = miniFaces[bestRectIdx];
