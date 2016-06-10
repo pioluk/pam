@@ -82,25 +82,31 @@ namespace Pam
                 return;
 
             bool[] rectUsed = new bool[faceRects.Length];
+            Rectangle[] modFaceRects = new Rectangle[faceRects.Length];
+            Bitmap[] miniFaces = new Bitmap[faceRects.Length];
+
+            for (int ri = 0; ri < faceRects.Length; ++ri)
+            {
+                Rectangle faceRect = faceRects[ri];
+                modFaceRects[ri] = new Rectangle(faceRect.X + faceRect.Width / 4, faceRect.Y, faceRect.Width / 2, faceRect.Height);
+
+                using (Bitmap faceBitmap = frame.Clone(modFaceRects[ri], frame.PixelFormat))
+                {
+                    miniFaces[ri] = new Bitmap(faceBitmap, new Size(16, 16));
+                }
+            }
 
             foreach (Face face in detectedFaces)
             {
 
                 int bestRectIdx = -1;
                 double bestFactor = 1000;
-                Bitmap miniFace = null;
 
                 for (int ri = 0; ri < faceRects.Length; ++ri)
                 {
                     Rectangle faceRect = faceRects[ri];
-                    Rectangle modFaceRect = new Rectangle(faceRect.X + faceRect.Width / 4, faceRect.Y, faceRect.Width / 2, faceRect.Height);
-
-                    using (Bitmap faceBitmap = frame.Clone(modFaceRect, frame.PixelFormat))
-                    {
-                        if (miniFace != null)
-                            miniFace.Dispose();
-                        miniFace = new Bitmap(faceBitmap, new Size(16, 16));
-                    }
+                    Rectangle modFaceRect = modFaceRects[ri];
+                    Bitmap miniFace = miniFaces[ri];
 
                     double dist = distanceFactor(face, faceRect);
                     float mse = MeanSquareError(face.Mini, miniFace);
@@ -121,7 +127,7 @@ namespace Pam
                     rectUsed[bestRectIdx] = true;
                     face.InUse = true;
                     face.Mini.Dispose();
-                    face.Mini = miniFace;
+                    face.Mini = miniFaces[bestRectIdx];
                 }
 
             }
@@ -131,17 +137,9 @@ namespace Pam
                 if (rectUsed[ri])
                     continue;
 
-                Rectangle faceRect = faceRects[ri];
-                Rectangle modFaceRect = new Rectangle(faceRect.X + faceRect.Width / 4, faceRect.Y, faceRect.Width / 2, faceRect.Height);
-                Bitmap miniFace;
-                using (Bitmap faceBitmap = frame.Clone(modFaceRect, frame.PixelFormat))
-                {
-                    miniFace = new Bitmap(faceBitmap, new Size(16, 16));
-                }
-
                 IArtifact artifact = RandomArtifact();
-                Face newFace = new Face { Id = nextFaceId++, TimesUnused = 0, Artifact = artifact, Mini = miniFace };
-                newFace.RectFilter.add(faceRect);
+                Face newFace = new Face { Id = nextFaceId++, TimesUnused = 0, Artifact = artifact, Mini = miniFaces[ri] };
+                newFace.RectFilter.add(faceRects[ri]);
                 detectedFaces.Add(newFace);
             }
 
