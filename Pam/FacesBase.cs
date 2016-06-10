@@ -68,6 +68,8 @@ namespace Pam
                 ++face.TimesUnused;
             });
 
+            detectedFaces.Sort((Face a, Face b) => { return a.TimesUnused - b.TimesUnused; });
+
             detectedFaces.RemoveAll((Face face) =>
             {
                 if (face.TimesUnused > 100)
