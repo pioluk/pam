@@ -206,8 +206,8 @@ namespace Pam
                 int x = pb[i];
                 int y = b[i];
                 int d = x - y;
-                int dd = d * d;
-                sum += (uint)dd;
+                ulong dd = (ulong)(d * d);
+                sum += dd;
             }
 
             return ((float)sum) / (b.Length);
