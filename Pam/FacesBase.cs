@@ -85,6 +85,7 @@ namespace Pam
 
                 double bestFactor = 1;
                 Face bestFace = null;
+                float bestMse = float.PositiveInfinity;
 
                 foreach (Face face in detectedFaces)
                 {
@@ -100,6 +101,7 @@ namespace Pam
                     {
                         bestFactor = factor;
                         bestFace = face;
+                        bestMse = mse;
                     }
                 }
 
@@ -133,49 +135,69 @@ namespace Pam
             return RectUtils.distanceFactor(face.RectFilter.Rectangle, rect);
         }
 
+        private static unsafe ushort[] blurredImg(Bitmap bmp)
+        {
+            int iH = bmp.Height - 2;
+            int iW = bmp.Width - 2;
+            int iW3 = iW * 3;
+            ushort[] bl = new ushort[iH * iW3];
+            BitmapData data = bmp.LockBits(new Rectangle(Point.Empty, bmp.Size), ImageLockMode.ReadOnly, PixelFormat.Format24bppRgb);
+            try
+            {
+                fixed(ushort* bl_ptr = bl)
+                {
+                    ushort* bl_line = bl_ptr;
+                    byte* bmp_line = (byte*)data.Scan0.ToPointer();
+                    for(int y = 0; y < iH; ++y)
+                    {
+                        for (int dy = 0; dy < 3; ++dy)
+                        {
+                            ushort* bl_pix = bl_line;
+                            byte* bmp_pix = bmp_line;
+                            for (int x = 0; x < iW; ++x)
+                            {
+                                for (int dx = 0; dx < 3; ++dx)
+                                {
+                                    for (int ch = 0; ch < 3; ++ch)
+                                    {
+                                        bl_pix[ch] += bmp_pix[ch];
+                                    }
+                                    bmp_pix += 3;
+                                }
+                                bmp_pix -= 6;
+                                bl_pix += 3;
+                            }
+                            bmp_line += data.Stride;
+                        }
+                        bl_line += iW3;
+                        bmp_line -= data.Stride * 2;
+                    }
+                }
+            }
+            finally
+            {
+                bmp.UnlockBits(data);
+            }
+            return bl;
+        }
+
         private float MeanSquareError(Bitmap previousFrame, Bitmap frame)
         {
             ulong sum = 0;
 
-            BitmapData previousFrameData = previousFrame.LockBits(new Rectangle(Point.Empty, previousFrame.Size), ImageLockMode.ReadOnly, PixelFormat.Format24bppRgb);
-            BitmapData frameData = frame.LockBits(new Rectangle(Point.Empty, frame.Size), ImageLockMode.ReadOnly, PixelFormat.Format24bppRgb);
+            ushort[] pb = blurredImg(previousFrame);
+            ushort[] b = blurredImg(frame);
 
-            int width3 = frameData.Width * 3;
-            int height = frameData.Height;
-
-            unsafe
+            for(int i = 0; i < b.Length; ++i)
             {
-                byte* previousPixels = (byte*)previousFrameData.Scan0.ToPointer();
-                byte* pixels = (byte*)frameData.Scan0.ToPointer();
-
-                for (int y = 0; y < height; ++y)
-                {
-                    byte* pp = previousPixels;
-                    byte* p = pixels;
-
-                    for (int x = 0; x < width3; ++x)
-                    {
-                        byte pVal = *pp;
-                        byte val = *p;
-
-                        long diff = pVal - val;
-                        long sd = diff * diff;
-
-                        sum += (ulong)sd;
-
-                        ++pp;
-                        ++p;
-                    }
-
-                    previousPixels += previousFrameData.Stride;
-                    pixels += frameData.Stride;
-                }
+                int x = pb[i];
+                int y = b[i];
+                int d = x - y;
+                int dd = d * d;
+                sum += (uint)dd;
             }
 
-            previousFrame.UnlockBits(previousFrameData);
-            frame.UnlockBits(frameData);
-
-            return ((float)sum) / (width3 * height);
+            return ((float)sum) / (b.Length);
         }
 
         private static unsafe float[] calcHistogram(Bitmap image)
