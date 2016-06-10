@@ -35,15 +35,11 @@ namespace Pam
             fl.Flush();
             fl.Dispose();
             font.Dispose();
-            Clear();
         }
 
         public void Clear()
         {
-            List<Face> oldList = detectedFaces;
-            detectedFaces = new List<Face>();
-            foreach(Face face in oldList)
-                face.Dispose();
+            detectedFaces.Clear();
         }
 
         public void DrawArtifacts(Graphics g)
@@ -67,15 +63,7 @@ namespace Pam
                 ++face.TimesUnused;
             });
 
-            detectedFaces.RemoveAll((Face face) =>
-            {
-                if(face.TimesUnused > 100)
-                {
-                    face.Dispose();
-                    return true;
-                }
-                return false;
-            });
+            detectedFaces.RemoveAll((Face face) => { return (face.TimesUnused > 100); });
 
             if (faceRects == null || faceRects.Length == 0)
                 return;

@@ -3,7 +3,7 @@ using System.Drawing;
 
 namespace Pam
 {
-    internal class Face : IDisposable
+    internal class Face
     {
         public int Id = 0;
         public int TimesUnused = 0;
@@ -11,9 +11,5 @@ namespace Pam
         public bool InUse = false;
         public ushort[] Mini = null;
         public RectFilter RectFilter = new RectFilter();
-
-        public void Dispose()
-        {
-        }
     }
 }
