@@ -42,7 +42,7 @@ namespace Pam
         {
             List<Face> oldList = detectedFaces;
             detectedFaces = new List<Face>();
-            foreach(Face face in oldList)
+            foreach (Face face in oldList)
                 face.Dispose();
         }
 
@@ -52,7 +52,7 @@ namespace Pam
             {
                 if (face.InUse)
                 {
-                    if(drawId)
+                    if (drawId)
                         g.DrawString(String.Format("#{0}", face.Id), font, Brushes.Blue, face.RectFilter.Rectangle.X, face.RectFilter.Rectangle.Y);
                     else
                         face.Artifact.draw(g, face.RectFilter.Rectangle);
@@ -62,14 +62,15 @@ namespace Pam
 
         public void UpdateFacesInfo(Bitmap frame, Rectangle[] faceRects)
         {
-            detectedFaces.ForEach((Face face) => {
+            detectedFaces.ForEach((Face face) =>
+            {
                 face.InUse = false;
                 ++face.TimesUnused;
             });
 
             detectedFaces.RemoveAll((Face face) =>
             {
-                if(face.TimesUnused > 100)
+                if (face.TimesUnused > 100)
                 {
                     face.Dispose();
                     return true;
@@ -82,24 +83,24 @@ namespace Pam
 
             bool[] rectUsed = new bool[faceRects.Length];
 
-            foreach(Face face in detectedFaces)
+            foreach (Face face in detectedFaces)
             {
 
-            int bestRectIdx = -1;
-            double bestFactor = 1000;
+                int bestRectIdx = -1;
+                double bestFactor = 1000;
                 Bitmap miniFace = null;
 
-            for (int ri = 0; ri < faceRects.Length; ++ri)
-            {
-                Rectangle faceRect = faceRects[ri];
-                Rectangle modFaceRect = new Rectangle(faceRect.X + faceRect.Width / 4, faceRect.Y, faceRect.Width / 2, faceRect.Height);
-
-                using (Bitmap faceBitmap = frame.Clone(modFaceRect, frame.PixelFormat))
+                for (int ri = 0; ri < faceRects.Length; ++ri)
                 {
-                    if(miniFace != null)
-                        miniFace.Dispose();
-                    miniFace = new Bitmap(faceBitmap, new Size(16, 16));
-                }
+                    Rectangle faceRect = faceRects[ri];
+                    Rectangle modFaceRect = new Rectangle(faceRect.X + faceRect.Width / 4, faceRect.Y, faceRect.Width / 2, faceRect.Height);
+
+                    using (Bitmap faceBitmap = frame.Clone(modFaceRect, frame.PixelFormat))
+                    {
+                        if (miniFace != null)
+                            miniFace.Dispose();
+                        miniFace = new Bitmap(faceBitmap, new Size(16, 16));
+                    }
 
                     double dist = distanceFactor(face, faceRect);
                     float mse = MeanSquareError(face.Mini, miniFace);
@@ -113,15 +114,15 @@ namespace Pam
                         bestFactor = factor;
                         bestRectIdx = ri;
                     }
-            }
+                }
 
-            if(bestRectIdx != -1)
-            {
-                rectUsed[bestRectIdx] = true;
-                face.InUse = true;
-                face.Mini.Dispose();
-                face.Mini = miniFace;
-            }
+                if (bestRectIdx != -1)
+                {
+                    rectUsed[bestRectIdx] = true;
+                    face.InUse = true;
+                    face.Mini.Dispose();
+                    face.Mini = miniFace;
+                }
 
             }
 
@@ -170,11 +171,11 @@ namespace Pam
             BitmapData data = bmp.LockBits(new Rectangle(Point.Empty, bmp.Size), ImageLockMode.ReadOnly, PixelFormat.Format24bppRgb);
             try
             {
-                fixed(ushort* bl_ptr = bl)
+                fixed (ushort* bl_ptr = bl)
                 {
                     ushort* bl_line = bl_ptr;
                     byte* bmp_line = (byte*)data.Scan0.ToPointer();
-                    for(int y = 0; y < iH; ++y)
+                    for (int y = 0; y < iH; ++y)
                     {
                         for (int dy = 0; dy < D; ++dy)
                         {
@@ -214,7 +215,7 @@ namespace Pam
             ushort[] pb = blurredImg(previousFrame);
             ushort[] b = blurredImg(frame);
 
-            for(int i = 0; i < b.Length; ++i)
+            for (int i = 0; i < b.Length; ++i)
             {
                 int x = pb[i];
                 int y = b[i];
@@ -236,17 +237,17 @@ namespace Pam
 
             byte* pixels = (byte*)data.Scan0.ToPointer();
 
-            for(int y = 0; y < data.Height; ++y)
+            for (int y = 0; y < data.Height; ++y)
             {
                 byte* pix = pixels;
-                for(int x = 0; x < data.Width; ++x)
+                for (int x = 0; x < data.Width; ++x)
                 {
                     int r = (int)(uint)pix[0];
                     int g = (int)(uint)pix[1];
                     int b = (int)(uint)pix[2];
 
                     int h = rgb2hsv_hue(r, g, b);
-                    if(h >= 0)
+                    if (h >= 0)
                         hist[h]++;
 
                     pix += 3;
@@ -259,7 +260,7 @@ namespace Pam
             image.UnlockBits(data);
 
             float[] norm_hist = new float[HIST_LEN];
-            for(int i = 0; i < hist.Length; ++i)
+            for (int i = 0; i < hist.Length; ++i)
             {
                 norm_hist[i] = hist[i] / imgSize;
             }
@@ -270,7 +271,7 @@ namespace Pam
         {
             double mse = 0f;
 
-            for(int i = 0; i < h1.Length - 1; ++i)
+            for (int i = 0; i < h1.Length - 1; ++i)
             {
                 float s1 = h1[i] + h1[i + 1];
                 float s2 = h2[i] + h2[i + 1];
