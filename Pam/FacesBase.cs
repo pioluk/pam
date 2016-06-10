@@ -84,7 +84,8 @@ namespace Pam
             foreach (Face face in detectedFaces)
             {
                 int bestRectIdx = -1;
-                double bestFactor = 2;
+                double bestDist = 2;
+                double bestMSE = 3000000;
 
                 for (int ri = 0; ri < faceRects.Length; ++ri)
                 {
@@ -96,11 +97,10 @@ namespace Pam
 
                     factLog.WriteLine("{0} {1}", dist, mse);
 
-                    double factor = dist;
-
-                    if (factor < bestFactor)
+                    if (dist < bestDist && mse < bestMSE)
                     {
-                        bestFactor = factor;
+                        bestDist = dist;
+                        bestMSE = mse;
                         bestRectIdx = ri;
                     }
                 }
