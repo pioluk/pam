@@ -63,6 +63,7 @@ namespace Pam
                 face.InUse = false;
                 ++face.TimesUnused;
                 ++face.TimesUndetected;
+                ++face.Age;
             });
 
             detectedFaces.Sort((Face a, Face b) => { return a.TimesUnused - b.TimesUnused; });
