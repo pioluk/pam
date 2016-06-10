@@ -146,8 +146,8 @@ namespace Pam
 
         private static unsafe ushort[] blurredImg(Bitmap bmp)
         {
-            int iH = bmp.Height - 2;
-            int iW = bmp.Width - 2;
+            int iH = bmp.Height - 4;
+            int iW = bmp.Width - 4;
             int iW3 = iW * 3;
             ushort[] bl = new ushort[iH * iW3];
             BitmapData data = bmp.LockBits(new Rectangle(Point.Empty, bmp.Size), ImageLockMode.ReadOnly, PixelFormat.Format24bppRgb);
@@ -159,13 +159,13 @@ namespace Pam
                     byte* bmp_line = (byte*)data.Scan0.ToPointer();
                     for(int y = 0; y < iH; ++y)
                     {
-                        for (int dy = 0; dy < 3; ++dy)
+                        for (int dy = 0; dy < 5; ++dy)
                         {
                             ushort* bl_pix = bl_line;
                             byte* bmp_pix = bmp_line;
                             for (int x = 0; x < iW; ++x)
                             {
-                                for (int dx = 0; dx < 3; ++dx)
+                                for (int dx = 0; dx < 5; ++dx)
                                 {
                                     for (int ch = 0; ch < 3; ++ch)
                                     {
@@ -173,13 +173,13 @@ namespace Pam
                                     }
                                     bmp_pix += 3;
                                 }
-                                bmp_pix -= 6;
+                                bmp_pix -= 12;
                                 bl_pix += 3;
                             }
                             bmp_line += data.Stride;
                         }
                         bl_line += iW3;
-                        bmp_line -= data.Stride * 2;
+                        bmp_line -= data.Stride * 4;
                     }
                 }
             }
