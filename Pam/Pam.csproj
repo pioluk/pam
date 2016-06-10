@@ -105,6 +105,7 @@
     <Compile Include="FacesBase.cs" />
     <Compile Include="MoustacheArtifact.cs" />
     <Compile Include="RectFilter.cs" />
+    <Compile Include="RectUtils.cs" />
     <Compile Include="SunglassesArtifact.cs" />
     <Compile Include="IArtifact.cs" />
     <Compile Include="MainForm.cs">
