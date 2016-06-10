@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.IO;
 
 namespace Pam
 {
@@ -25,8 +26,14 @@ namespace Pam
 
         Font font = new Font("Comic Sans MS", 48);
 
+        StreamWriter factLog = new StreamWriter("factLog.txt");
+
         public void Dispose()
         {
+            StreamWriter fl = factLog;
+            factLog = null;
+            fl.Flush();
+            fl.Dispose();
             font.Dispose();
             Clear();
         }
@@ -83,7 +90,7 @@ namespace Pam
                     miniFace = new Bitmap(faceBitmap, new Size(16, 16));
                 }
 
-                double bestFactor = 1;
+                double bestFactor = 1000;
                 Face bestFace = null;
                 float bestMse = float.PositiveInfinity;
 
@@ -94,6 +101,8 @@ namespace Pam
 
                     double dist = distanceFactor(face, faceRect);
                     float mse = MeanSquareError(face.Mini, miniFace);
+
+                    factLog.WriteLine("{0} {1}", dist, mse);
 
                     double factor = dist;
 
