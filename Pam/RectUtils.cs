@@ -7,7 +7,7 @@ namespace Pam
     {
         public static double distanceFactor(Rectangle ro, Rectangle rn)
         {
-            return 2 * (4 * rectsDistance(ro, rn) + squaredCentersDistance(ro, rn) + sizeChange(ro, rn)) / (double)((ro.Width + rn.Width) * (ro.Height + rn.Height));
+            return (4 * rectsDistance(ro, rn) + squaredCentersDistance(ro, rn) + sizeChange(ro, rn)) / (double)((ro.Width + rn.Width) * (ro.Height + rn.Height));
         }
 
         public static ulong rectsDistance(Rectangle a, Rectangle b)
