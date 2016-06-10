@@ -72,22 +72,11 @@ namespace Pam
                 return;
 
             bool[] rectUsed = new bool[faceRects.Length];
-            Rectangle[] modFaceRects = new Rectangle[faceRects.Length];
             ushort[][] miniFaces = new ushort[faceRects.Length][];
 
             for (int ri = 0; ri < faceRects.Length; ++ri)
             {
-                Rectangle faceRect = faceRects[ri];
-                modFaceRects[ri] = new Rectangle(faceRect.X + faceRect.Width / 4, faceRect.Y, faceRect.Width / 2, faceRect.Height);
-                Bitmap miniFaceBmp;
-                using (Bitmap faceBitmap = frame.Clone(modFaceRects[ri], frame.PixelFormat))
-                {
-                    miniFaceBmp = new Bitmap(faceBitmap, new Size(16, 16));
-                }
-                using (miniFaceBmp)
-                {
-                    miniFaces[ri] = blurredImg(miniFaceBmp);
-                }
+                miniFaces[ri] = faceImg(frame, faceRects[ri]);
             }
 
             foreach (Face face in detectedFaces)
@@ -98,7 +87,6 @@ namespace Pam
                 for (int ri = 0; ri < faceRects.Length; ++ri)
                 {
                     Rectangle faceRect = faceRects[ri];
-                    Rectangle modFaceRect = modFaceRects[ri];
                     ushort[] miniFace = miniFaces[ri];
 
                     double dist = distanceFactor(face, faceRect);
@@ -137,6 +125,20 @@ namespace Pam
                 detectedFaces.Add(newFace);
             }
 
+        }
+
+        private static ushort[] faceImg(Bitmap frame, Rectangle faceRect)
+        {
+            Rectangle modFaceRect = new Rectangle(faceRect.X + faceRect.Width / 4, faceRect.Y, faceRect.Width / 2, faceRect.Height);
+            Bitmap miniFaceBmp;
+            using (Bitmap faceBitmap = frame.Clone(modFaceRect, frame.PixelFormat))
+            {
+                miniFaceBmp = new Bitmap(faceBitmap, new Size(16, 16));
+            }
+            using (miniFaceBmp)
+            {
+                return blurredImg(miniFaceBmp);
+            }
         }
 
         private IArtifact RandomArtifact()
