@@ -114,6 +114,22 @@ namespace Pam
 
             }
 
+            foreach (Face face in detectedFaces)
+            {
+                if (face.InUse)
+                    continue;
+
+                ushort[] img = faceImg(frame, face.RectFilter.Rectangle);
+                double mse = MeanSquareError(face.Mini, img);
+
+                if(mse < 1000000)
+                {
+                    face.InUse = true;
+                    face.TimesUnused = 0;
+                    face.Mini = img;
+                }
+            }
+
             for (int ri = 0; ri < faceRects.Length; ++ri)
             {
                 if (rectUsed[ri])
