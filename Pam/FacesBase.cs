@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
@@ -65,6 +66,8 @@ namespace Pam
                 ++face.TimesUndetected;
                 ++face.Age;
             });
+
+            mergeDuplicatedFaces();
 
             detectedFaces.Sort((Face a, Face b) => { return a.TimesUnused - b.TimesUnused; });
 
@@ -238,6 +241,32 @@ namespace Pam
             }
 
             return ((double)sum) / curr.Length;
+        }
+
+        private void mergeDuplicatedFaces()
+        {
+            List<Face> toRemove = new List<Face>();
+            for(int i = 0; i < detectedFaces.Count; ++i)
+            {
+                for(int j = i + 1; j < detectedFaces.Count; ++j)
+                {
+                    Face a = detectedFaces[i];
+                    Face b = detectedFaces[j];
+                    double dist = distanceFactor(a, b.RectFilter.Rectangle);
+                    if(dist < 1)
+                    {
+                        double mse = MeanSquareError(a.Mini, b.Mini);
+                        if(mse < 1000000)
+                        {
+                            if (a.Age < b.Age)
+                                toRemove.Add(a);
+                            else
+                                toRemove.Add(b);
+                        }
+                    }
+                }
+            }
+            detectedFaces = detectedFaces.Except(toRemove).ToList();
         }
 
     }
