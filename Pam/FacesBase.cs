@@ -14,7 +14,8 @@ namespace Pam
         {
             new SombreroArtifact(),
             new SunglassesArtifact(),
-            new MoustacheArtifact()
+            new MoustacheArtifact(),
+            new HelmetArtifact()
         };
 
         private Random rng = new Random();

@@ -101,6 +101,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="HelmetArtifact.cs" />
     <Compile Include="Face.cs" />
     <Compile Include="FacesBase.cs" />
     <Compile Include="MoustacheArtifact.cs" />
