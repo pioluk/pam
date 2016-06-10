@@ -75,9 +75,12 @@ namespace Pam
 
             foreach (Rectangle faceRect in faceRects)
             {
-                using (Bitmap faceBitmap = frame.Clone(faceRect, frame.PixelFormat))
+                Rectangle modFaceRect = new Rectangle(faceRect.X + faceRect.Width / 4, faceRect.Y, faceRect.Width / 2, faceRect.Height);
+                using (Bitmap faceBitmap = frame.Clone(modFaceRect, frame.PixelFormat))
                 {
                     double bestFactor = 1000;
+                    Bitmap miniFace = new Bitmap(faceBitmap, new Size(16, 16));
+
                     Face bestFace = null;
 
                     foreach (Face face in detectedFaces)
@@ -85,7 +88,10 @@ namespace Pam
                         if (face.InUse)
                             continue;
 
-                        double factor = distanceFactor(face, faceRect);
+                        double dist = distanceFactor(face, faceRect);
+                        float mse = MeanSquareError(face.Mini, miniFace);
+
+                        double factor = dist + mse;
 
                         if (factor < bestFactor)
                         {
@@ -99,11 +105,13 @@ namespace Pam
                         bestFace.InUse = true;
                         bestFace.TimesUnused = 0;
                         bestFace.RectFilter.add(faceRect);
+                        bestFace.Mini.Dispose();
+                        bestFace.Mini = miniFace;
                     }
                     else
                     {
                         IArtifact artifact = RandomArtifact();
-                        Face newFace = new Face { Id = nextFaceId++, TimesUnused = 0, Artifact = artifact };
+                        Face newFace = new Face { Id = nextFaceId++, TimesUnused = 0, Artifact = artifact, Mini = miniFace };
                         newFace.RectFilter.add(faceRect);
                         detectedFaces.Add(newFace);
                     }
@@ -152,6 +160,51 @@ namespace Pam
             ulong xx = (ulong)(dx * dx);
             ulong yy = (ulong)(dy * dy);
             return xx + yy;
+        }
+
+        private float MeanSquareError(Bitmap previousFrame, Bitmap frame)
+        {
+            ulong sum = 0;
+
+            BitmapData previousFrameData = previousFrame.LockBits(new Rectangle(Point.Empty, previousFrame.Size), ImageLockMode.ReadOnly, PixelFormat.Format24bppRgb);
+            BitmapData frameData = frame.LockBits(new Rectangle(Point.Empty, frame.Size), ImageLockMode.ReadOnly, PixelFormat.Format24bppRgb);
+
+            int width3 = frameData.Width * 3;
+            int height = frameData.Height;
+
+            unsafe
+            {
+                byte* previousPixels = (byte*)previousFrameData.Scan0.ToPointer();
+                byte* pixels = (byte*)frameData.Scan0.ToPointer();
+
+                for (int y = 0; y < height; ++y)
+                {
+                    byte* pp = previousPixels;
+                    byte* p = pixels;
+
+                    for (int x = 0; x < width3; ++x)
+                    {
+                        byte pVal = *pp;
+                        byte val = *p;
+
+                        long diff = pVal - val;
+                        long sd = diff * diff;
+
+                        sum += (ulong)sd;
+
+                        ++pp;
+                        ++p;
+                    }
+
+                    previousPixels += previousFrameData.Stride;
+                    pixels += frameData.Stride;
+                }
+            }
+
+            previousFrame.UnlockBits(previousFrameData);
+            frame.UnlockBits(frameData);
+
+            return ((float)sum) / (width3 * height);
         }
 
     }

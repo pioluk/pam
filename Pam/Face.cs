@@ -10,10 +10,13 @@ namespace Pam
         public Bitmap Bitmap = null;
         public IArtifact Artifact = null;
         public bool InUse = false;
+        public Bitmap Mini;
         public RectFilter RectFilter = new RectFilter();
 
         public void Dispose()
         {
+            if(Mini != null)
+                Mini.Dispose();
             if(Bitmap != null)
                 Bitmap.Dispose();
         }
