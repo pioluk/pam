@@ -7,6 +7,7 @@ namespace Pam
     {
         public int Id = 0;
         public int TimesUnused = 0;
+        public int TimesUndetected = 0;
         public IArtifact Artifact = null;
         public bool InUse = false;
         public ushort[] Mini = null;

@@ -62,6 +62,7 @@ namespace Pam
             {
                 face.InUse = false;
                 ++face.TimesUnused;
+                ++face.TimesUndetected;
             });
 
             detectedFaces.Sort((Face a, Face b) => { return a.TimesUnused - b.TimesUnused; });
@@ -108,6 +109,7 @@ namespace Pam
                     rectUsed[bestRectIdx] = true;
                     face.InUse = true;
                     face.TimesUnused = 0;
+                    face.TimesUndetected = 0;
                     face.RectFilter.add(faceRects[bestRectIdx]);
                     face.Mini = miniFaces[bestRectIdx];
                 }
@@ -117,6 +119,9 @@ namespace Pam
             foreach (Face face in detectedFaces)
             {
                 if (face.InUse)
+                    continue;
+
+                if (face.TimesUndetected > 10)
                     continue;
 
                 ushort[] img = faceImg(frame, face.RectFilter.Rectangle);
