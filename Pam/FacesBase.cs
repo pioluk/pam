@@ -82,12 +82,16 @@ namespace Pam
 
             foreach (Rectangle faceRect in faceRects)
             {
-                Bitmap miniFace;
+                ushort[] miniFace;
                 Rectangle modFaceRect = new Rectangle(faceRect.X + faceRect.Width / 4, faceRect.Y, faceRect.Width / 2, faceRect.Height);
-
+                Bitmap miniFaceBmp;
                 using (Bitmap faceBitmap = frame.Clone(modFaceRect, frame.PixelFormat))
                 {
-                    miniFace = new Bitmap(faceBitmap, new Size(16, 16));
+                    miniFaceBmp = new Bitmap(faceBitmap, new Size(16, 16));
+                }
+                using (miniFaceBmp)
+                {
+                    miniFace = blurredImg(miniFaceBmp);
                 }
 
                 double bestFactor = 1000;
@@ -119,7 +123,6 @@ namespace Pam
                     bestFace.InUse = true;
                     bestFace.TimesUnused = 0;
                     bestFace.RectFilter.add(faceRect);
-                    bestFace.Mini.Dispose();
                     bestFace.Mini = miniFace;
                 }
                 else
@@ -194,23 +197,20 @@ namespace Pam
             return bl;
         }
 
-        private float MeanSquareError(Bitmap previousFrame, Bitmap frame)
+        private float MeanSquareError(ushort[] prev, ushort[] curr)
         {
             ulong sum = 0;
 
-            ushort[] pb = blurredImg(previousFrame);
-            ushort[] b = blurredImg(frame);
-
-            for(int i = 0; i < b.Length; ++i)
+            for(int i = 0; i < curr.Length; ++i)
             {
-                int x = pb[i];
-                int y = b[i];
-                int d = x - y;
+                int p = prev[i];
+                int c = curr[i];
+                int d = p - c;
                 ulong dd = (ulong)(d * d);
                 sum += dd;
             }
 
-            return ((float)sum) / (b.Length);
+            return ((float)sum) / (curr.Length);
         }
 
     }
