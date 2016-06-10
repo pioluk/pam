@@ -96,7 +96,7 @@ namespace Pam
 
                 double bestFactor = 1000;
                 Face bestFace = null;
-                float bestMse = float.PositiveInfinity;
+                double bestMse = float.PositiveInfinity;
 
                 foreach (Face face in detectedFaces)
                 {
@@ -104,7 +104,7 @@ namespace Pam
                         continue;
 
                     double dist = distanceFactor(face, faceRect);
-                    float mse = MeanSquareError(face.Mini, miniFace);
+                    double mse = MeanSquareError(face.Mini, miniFace);
 
                     factLog.WriteLine("{0} {1}", dist, mse);
 
@@ -197,7 +197,7 @@ namespace Pam
             return bl;
         }
 
-        private float MeanSquareError(ushort[] prev, ushort[] curr)
+        private double MeanSquareError(ushort[] prev, ushort[] curr)
         {
             ulong sum = 0;
 
@@ -210,7 +210,7 @@ namespace Pam
                 sum += dd;
             }
 
-            return ((float)sum) / (curr.Length);
+            return ((double)sum) / (curr.Length);
         }
 
     }
