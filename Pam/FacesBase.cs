@@ -43,7 +43,7 @@ namespace Pam
         {
             foreach (Face face in detectedFaces)
             {
-                if (face.TimesUnused < 4)
+                if (face.InUse)
                 {
                     if(drawId)
                         g.DrawString(String.Format("#{0}", face.Id), font, Brushes.Blue, face.RectFilter.Rectangle.X, face.RectFilter.Rectangle.Y);
