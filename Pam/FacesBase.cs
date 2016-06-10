@@ -102,7 +102,7 @@ namespace Pam
             {
 
                 int bestRectIdx = -1;
-                double bestFactor = 1000;
+                double bestFactor = 2;
 
                 for (int ri = 0; ri < faceRects.Length; ++ri)
                 {
