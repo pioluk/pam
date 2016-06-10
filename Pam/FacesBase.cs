@@ -81,8 +81,8 @@ namespace Pam
                 {
                     miniFace = new Bitmap(faceBitmap, new Size(16, 16));
                 }
-                double bestFactor = 1000;
 
+                double bestFactor = 1000;
                 Face bestFace = null;
 
                 foreach (Face face in detectedFaces)
@@ -129,7 +129,12 @@ namespace Pam
 
         private static double distanceFactor(Face face, Rectangle rect)
         {
-            return (rectsDistance(face.RectFilter.Rectangle, rect) + squaredCentersDistance(face.RectFilter.Rectangle, rect)) / Math.Sqrt(face.RectFilter.Rectangle.Width * face.RectFilter.Rectangle.Height);
+            return distanceFactor(face.RectFilter.Rectangle, rect);
+        }
+
+        private static double distanceFactor(Rectangle ro, Rectangle rn)
+        {
+            return (rectsDistance(ro, rn) + squaredCentersDistance(ro, rn)) / Math.Sqrt(ro.Width * ro.Height);
         }
 
         private static ulong rectsDistance(Rectangle a, Rectangle b)
