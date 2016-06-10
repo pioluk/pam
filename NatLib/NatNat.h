@@ -12,7 +12,7 @@ class NatNat
 public:
 	NatNat()
 	{
-		cascade.load("haarcascades\\haarcascade_frontalface_default.xml");
+		cascade.load("haarcascades\\haarcascade_frontalface_alt2.xml");
 	}
 	std::vector<cv::Rect> detectFaces(void* imgRGB, int w, int h, int stride);
 	cv::Mat grayImage(void* imgRGB, int w, int h, int stride);
