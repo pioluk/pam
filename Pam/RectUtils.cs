@@ -7,7 +7,7 @@ namespace Pam
     {
         public static double distanceFactor(Rectangle ro, Rectangle rn)
         {
-            return (rectsDistance(ro, rn) + squaredCentersDistance(ro, rn)) / Math.Sqrt(ro.Width * ro.Height);
+            return 2 * (4 * rectsDistance(ro, rn) + squaredCentersDistance(ro, rn) + sizeChange(ro, rn)) / (double)((ro.Width + rn.Width) * (ro.Height + rn.Height));
         }
 
         public static ulong rectsDistance(Rectangle a, Rectangle b)
@@ -33,6 +33,11 @@ namespace Pam
             return new Point(rect.X + rect.Width / 2, rect.Y + rect.Height / 2);
         }
 
+        public static ulong sizeChange(Rectangle a, Rectangle b)
+        {
+            return squaredDistance(new Point(a.Size), new Point(b.Size));
+        }
+
         public static ulong squaredDistance(Point a, Point b)
         {
             int dx = a.X - b.X;
@@ -41,5 +46,6 @@ namespace Pam
             ulong yy = (ulong)(dy * dy);
             return xx + yy;
         }
+
     }
 }

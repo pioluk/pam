@@ -82,7 +82,7 @@ namespace Pam
                     miniFace = new Bitmap(faceBitmap, new Size(16, 16));
                 }
 
-                double bestFactor = 1000;
+                double bestFactor = 1;
                 Face bestFace = null;
 
                 foreach (Face face in detectedFaces)
@@ -93,7 +93,7 @@ namespace Pam
                     double dist = distanceFactor(face, faceRect);
                     float mse = MeanSquareError(face.Mini, miniFace);
 
-                    double factor = dist + mse;
+                    double factor = dist;
 
                     if (factor < bestFactor)
                     {
