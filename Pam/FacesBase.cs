@@ -224,7 +224,7 @@ namespace Pam
             return bl;
         }
 
-        private double MeanSquareError(ushort[] prev, ushort[] curr)
+        private static double MeanSquareError(ushort[] prev, ushort[] curr)
         {
             ulong sum = 0;
 
@@ -237,7 +237,7 @@ namespace Pam
                 sum += dd;
             }
 
-            return ((double)sum) / (curr.Length);
+            return ((double)sum) / curr.Length;
         }
 
     }
