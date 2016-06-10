@@ -146,10 +146,14 @@ namespace Pam
 
         private static unsafe ushort[] blurredImg(Bitmap bmp)
         {
-            int iH = bmp.Height - 4;
-            int iW = bmp.Width - 4;
-            int iW3 = iW * 3;
-            ushort[] bl = new ushort[iH * iW3];
+            const int R = 2;
+            const int R2 = 2 * R;
+            const int D = R2 + 1;
+            const int CH = 3;
+            int iH = bmp.Height - R2;
+            int iW = bmp.Width - R2;
+            int iWC = iW * CH;
+            ushort[] bl = new ushort[iH * iWC];
             BitmapData data = bmp.LockBits(new Rectangle(Point.Empty, bmp.Size), ImageLockMode.ReadOnly, PixelFormat.Format24bppRgb);
             try
             {
@@ -159,27 +163,27 @@ namespace Pam
                     byte* bmp_line = (byte*)data.Scan0.ToPointer();
                     for(int y = 0; y < iH; ++y)
                     {
-                        for (int dy = 0; dy < 5; ++dy)
+                        for (int dy = 0; dy < D; ++dy)
                         {
                             ushort* bl_pix = bl_line;
                             byte* bmp_pix = bmp_line;
                             for (int x = 0; x < iW; ++x)
                             {
-                                for (int dx = 0; dx < 5; ++dx)
+                                for (int dx = 0; dx < D; ++dx)
                                 {
-                                    for (int ch = 0; ch < 3; ++ch)
+                                    for (int ch = 0; ch < CH; ++ch)
                                     {
                                         bl_pix[ch] += bmp_pix[ch];
                                     }
-                                    bmp_pix += 3;
+                                    bmp_pix += CH;
                                 }
-                                bmp_pix -= 12;
-                                bl_pix += 3;
+                                bmp_pix -= CH * R2;
+                                bl_pix += CH;
                             }
                             bmp_line += data.Stride;
                         }
-                        bl_line += iW3;
-                        bmp_line -= data.Stride * 4;
+                        bl_line += iWC;
+                        bmp_line -= data.Stride * R2;
                     }
                 }
             }
