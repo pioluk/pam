@@ -90,7 +90,7 @@ namespace Pam
             {
                 int bestRectIdx = -1;
                 double bestDist = 2;
-                double bestMSE = 3000000;
+                double bestMSE = 4800;
 
                 for (int ri = 0; ri < faceRects.Length; ++ri)
                 {
@@ -133,7 +133,7 @@ namespace Pam
                 ushort[] img = faceImg(frame, face.RectFilter.Rectangle);
                 double mse = MeanSquareError(face.Mini, img);
 
-                if(mse < 1000000)
+                if(mse < 1600)
                 {
                     face.InUse = true;
                     face.TimesUnused = 0;
@@ -231,6 +231,9 @@ namespace Pam
 
         private static double MeanSquareError(ushort[] prev, ushort[] curr)
         {
+            const int BA = Blur_R * 2 + 1;
+            const int BF = BA * BA * BA * BA;
+
             ulong sum = 0;
 
             for(int i = 0; i < curr.Length; ++i)
@@ -242,7 +245,7 @@ namespace Pam
                 sum += dd;
             }
 
-            return ((double)sum) / curr.Length;
+            return ((double)sum) / (curr.Length * BF);
         }
 
         private void mergeDuplicatedFaces()
@@ -258,7 +261,7 @@ namespace Pam
                     if(dist < 1)
                     {
                         double mse = MeanSquareError(a.Mini, b.Mini);
-                        if(mse < 1000000)
+                        if(mse < 1600)
                         {
                             if (a.Age < b.Age)
                             {
