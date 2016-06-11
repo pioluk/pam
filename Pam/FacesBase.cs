@@ -26,9 +26,11 @@ namespace Pam
 
         public bool drawId = false;
 
-        Font font = new Font("Comic Sans MS", 48);
+        private static readonly Font font = new Font("Comic Sans MS", 48);
 
-        StreamWriter factLog = new StreamWriter("factLog.txt");
+        private StreamWriter factLog = new StreamWriter("factLog.txt");
+
+        private const int Blur_R = 2;
 
         public void Dispose()
         {
@@ -36,7 +38,6 @@ namespace Pam
             factLog = null;
             fl.Flush();
             fl.Dispose();
-            font.Dispose();
         }
 
         public void Clear()
@@ -180,7 +181,7 @@ namespace Pam
 
         private static unsafe ushort[] blurredImg(Bitmap bmp)
         {
-            const int R = 2;
+            const int R = Blur_R;
             const int R2 = 2 * R;
             const int D = R2 + 1;
             const int CH = 3;
