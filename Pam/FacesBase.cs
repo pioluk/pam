@@ -157,7 +157,7 @@ namespace Pam
         {
             Rectangle modFaceRect = new Rectangle(faceRect.X + faceRect.Width / 4, faceRect.Y, faceRect.Width / 2, faceRect.Height);
             Bitmap miniFaceBmp;
-            using (Bitmap faceBitmap = frame.Clone(modFaceRect, frame.PixelFormat))
+            using (Bitmap faceBitmap = frame.Clone(modFaceRect, PixelFormat.Format24bppRgb))
             {
                 miniFaceBmp = new Bitmap(faceBitmap, new Size(16, 16));
             }
