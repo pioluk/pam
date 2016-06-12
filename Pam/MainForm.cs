@@ -154,5 +154,9 @@ namespace Pam
             facesBase.Clear();
         }
 
+        private void btnRefreshArts_Click(object sender, EventArgs e)
+        {
+            facesBase.refreshArtifacts();
+        }
     }
 }

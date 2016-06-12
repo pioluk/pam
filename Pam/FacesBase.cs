@@ -51,6 +51,12 @@ namespace Pam
             detectedFaces.Clear();
         }
 
+        public void refreshArtifacts()
+        {
+            foreach (Face face in detectedFaces)
+                face.Artifact = null;
+        }
+
         public void DrawArtifacts(Graphics g)
         {
             foreach (Face face in detectedFaces)
