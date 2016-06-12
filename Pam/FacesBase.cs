@@ -12,10 +12,12 @@ namespace Pam
 
         private static readonly IArtifact[] availableArtifacts =
         {
-            new SombreroArtifact(),
+           /* new SombreroArtifact(),
             new SunglassesArtifact(),
             new MoustacheArtifact(),
-            new HelmetArtifact()
+            new HelmetArtifact(),
+            new HatArtifact(),*/
+            new BearArtifact()
         };
 
         private Random rng = new Random();
