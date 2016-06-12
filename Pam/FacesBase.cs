@@ -22,6 +22,8 @@ namespace Pam
             new HatArtifact(),
         };
 
+        private int[] artifactUseCounts = new int[availableArtifacts.Length];
+
         private Random rng = new Random();
 
         private List<Face> detectedFaces = new List<Face>();
@@ -175,6 +177,7 @@ namespace Pam
         private IArtifact RandomArtifact()
         {
             int index = rng.Next(0, availableArtifacts.Length);
+            artifactUseCounts[index]++;
             return availableArtifacts[index];
         }
 
