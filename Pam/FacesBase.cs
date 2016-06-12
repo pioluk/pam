@@ -160,7 +160,7 @@ namespace Pam
             Bitmap miniFaceBmp;
             using (Bitmap faceBitmap = frame.Clone(modFaceRect, PixelFormat.Format24bppRgb))
             {
-                miniFaceBmp = new Bitmap(faceBitmap, new Size(16, 16));
+                miniFaceBmp = new Bitmap(faceBitmap, new Size(24, 32));
             }
             using (miniFaceBmp)
             {
