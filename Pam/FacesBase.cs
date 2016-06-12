@@ -15,8 +15,14 @@ namespace Pam
             new SombreroArtifact(),
             new SunglassesArtifact(),
             new MoustacheArtifact(),
-            new HelmetArtifact()
+            new HelmetArtifact(),
+            new Moustache2Artifact(),
+            new Moustache3Artifact(),
+            new FunnyGlassesArtifact(),
+            new HatArtifact(),
         };
+
+        private int[] artifactUseCounts = new int[availableArtifacts.Length];
 
         private Random rng = new Random();
 
@@ -170,7 +176,34 @@ namespace Pam
 
         private IArtifact RandomArtifact()
         {
-            int index = rng.Next(0, availableArtifacts.Length);
+            int min = int.MaxValue;
+            int minCnt = 0;
+            for(int i = 0; i < artifactUseCounts.Length; ++i)
+            {
+                int x = artifactUseCounts[i];
+                if (x < min)
+                {
+                    min = x;
+                    minCnt = 1;
+                }
+                else if (x == min)
+                    ++minCnt;
+            }
+            int index = 0;
+            int r = rng.Next(minCnt);
+            int j = 0;
+            for(int i = 0; i < artifactUseCounts.Length; ++i)
+            {
+                if (min != artifactUseCounts[i])
+                    continue;
+                if(j == r)
+                {
+                    index = i;
+                    break;
+                }
+                ++j;
+            }
+            artifactUseCounts[index]++;
             return availableArtifacts[index];
         }
 
