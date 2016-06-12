@@ -97,7 +97,7 @@ namespace Pam
                 return p;
             });
 
-            detectedFaces.RemoveAll((Face face) => { return (face.TimesUnused > 100); });
+            detectedFaces.RemoveAll((Face face) => { return (face.TimesUnused > 1000); });
 
             int faceRectCount = (faceRects == null ? 0 : faceRects.Length);
 
