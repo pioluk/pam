@@ -176,20 +176,32 @@ namespace Pam
 
         private IArtifact RandomArtifact()
         {
-            int usesSum = artifactUseCounts.Sum();
-            int sum = 0;
-            int[] invSums = new int[artifactUseCounts.Length];
-            for (int i = 0; i < invSums.Length; ++i)
-                invSums[i] = (sum += usesSum - artifactUseCounts[i]);
-            int val = rng.Next(0, sum);
-            int index = 0;
-            for(int i = 0; i < invSums.Length; ++i)
+            int min = int.MaxValue;
+            int minCnt = 0;
+            for(int i = 0; i < artifactUseCounts.Length; ++i)
             {
-                if(val <= invSums[i])
+                int x = artifactUseCounts[i];
+                if (x < min)
+                {
+                    min = x;
+                    minCnt = 1;
+                }
+                else if (x == min)
+                    ++minCnt;
+            }
+            int index = 0;
+            int r = rng.Next(minCnt);
+            int j = 0;
+            for(int i = 0; i < artifactUseCounts.Length; ++i)
+            {
+                if (min != artifactUseCounts[i])
+                    continue;
+                if(j == r)
                 {
                     index = i;
                     break;
                 }
+                ++j;
             }
             artifactUseCounts[index]++;
             return availableArtifacts[index];
