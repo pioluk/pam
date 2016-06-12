@@ -77,7 +77,15 @@ namespace Pam
 
             mergeDuplicatedFaces();
 
-            detectedFaces.Sort((Face a, Face b) => { return a.TimesUnused - b.TimesUnused; });
+            detectedFaces.Sort((Face a, Face b) =>
+            {
+                int p = a.TimesUnused - b.TimesUnused;
+                if (p == 0)
+                    p = a.TimesUndetected - b.TimesUndetected;
+                if (p == 0)
+                    p = b.Age - a.Age;
+                return p;
+            });
 
             detectedFaces.RemoveAll((Face face) => { return (face.TimesUnused > 100); });
 
