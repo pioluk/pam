@@ -272,6 +272,7 @@ namespace Pam
                             if(b.TimesUndetected < a.TimesUndetected)
                             {
                                 a.RectFilter.add(b.RectFilter.Rectangle);
+                                a.TimesUndetected = b.TimesUndetected;
                             }
                             toRemove.Add(b);
                         }
