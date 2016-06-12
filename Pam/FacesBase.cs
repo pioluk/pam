@@ -116,7 +116,7 @@ namespace Pam
             {
                 int bestRectIdx = -1;
                 double bestDist = 2;
-                double bestMSE = 4800;
+                double bestMSE = 10000;
 
                 for (int ri = 0; ri < faceRectCount; ++ri)
                 {
@@ -128,7 +128,7 @@ namespace Pam
 
                     factLog.WriteLine("{0} {1}", dist, mse);
 
-                    if (dist < bestDist && mse < bestMSE)
+                    if (mse < bestMSE)
                     {
                         bestDist = dist;
                         bestMSE = mse;
