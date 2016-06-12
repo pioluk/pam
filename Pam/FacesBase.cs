@@ -51,6 +51,12 @@ namespace Pam
             detectedFaces.Clear();
         }
 
+        public void refreshArtifacts()
+        {
+            foreach (Face face in detectedFaces)
+                face.Artifact = null;
+        }
+
         public void DrawArtifacts(Graphics g)
         {
             foreach (Face face in detectedFaces)
@@ -60,7 +66,11 @@ namespace Pam
                     if (drawId)
                         g.DrawString(String.Format("#{0}", face.Id), font, Brushes.Blue, face.RectFilter.Rectangle.X, face.RectFilter.Rectangle.Y);
                     else
+                    {
+                        if (face.Artifact == null)
+                            face.Artifact = RandomArtifact();
                         face.Artifact.draw(g, face.RectFilter.Rectangle);
+                    }
                 }
             }
         }
@@ -152,8 +162,7 @@ namespace Pam
                 if (rectUsed[ri])
                     continue;
 
-                IArtifact artifact = RandomArtifact();
-                Face newFace = new Face { Id = nextFaceId++, TimesUnused = 0, Artifact = artifact, Mini = miniFaces[ri] };
+                Face newFace = new Face { Id = nextFaceId++, Mini = miniFaces[ri] };
                 newFace.RectFilter.add(faceRects[ri]);
                 detectedFaces.Add(newFace);
             }

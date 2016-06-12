@@ -35,6 +35,7 @@
             this.checkMirror = new System.Windows.Forms.CheckBox();
             this.btnClearFaces = new System.Windows.Forms.Button();
             this.checkID = new System.Windows.Forms.CheckBox();
+            this.btnRefreshArts = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // videoPlayer
@@ -44,7 +45,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.videoPlayer.Location = new System.Drawing.Point(0, 0);
             this.videoPlayer.Name = "videoPlayer";
-            this.videoPlayer.Size = new System.Drawing.Size(568, 409);
+            this.videoPlayer.Size = new System.Drawing.Size(571, 409);
             this.videoPlayer.TabIndex = 0;
             this.videoPlayer.VideoSource = null;
             // 
@@ -74,7 +75,7 @@
             // btnClearFaces
             // 
             this.btnClearFaces.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnClearFaces.Location = new System.Drawing.Point(481, 415);
+            this.btnClearFaces.Location = new System.Drawing.Point(484, 415);
             this.btnClearFaces.Name = "btnClearFaces";
             this.btnClearFaces.Size = new System.Drawing.Size(75, 23);
             this.btnClearFaces.TabIndex = 2;
@@ -94,11 +95,23 @@
             this.checkID.UseVisualStyleBackColor = true;
             this.checkID.CheckedChanged += new System.EventHandler(this.checkID_CheckedChanged);
             // 
+            // btnRefreshArts
+            // 
+            this.btnRefreshArts.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnRefreshArts.Location = new System.Drawing.Point(403, 415);
+            this.btnRefreshArts.Name = "btnRefreshArts";
+            this.btnRefreshArts.Size = new System.Drawing.Size(75, 23);
+            this.btnRefreshArts.TabIndex = 4;
+            this.btnRefreshArts.Text = "Refresh arts";
+            this.btnRefreshArts.UseVisualStyleBackColor = true;
+            this.btnRefreshArts.Click += new System.EventHandler(this.btnRefreshArts_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(568, 450);
+            this.ClientSize = new System.Drawing.Size(571, 450);
+            this.Controls.Add(this.btnRefreshArts);
             this.Controls.Add(this.checkID);
             this.Controls.Add(this.btnClearFaces);
             this.Controls.Add(this.btnStartStop);
@@ -119,6 +132,7 @@
         private System.Windows.Forms.CheckBox checkMirror;
         private System.Windows.Forms.Button btnClearFaces;
         private System.Windows.Forms.CheckBox checkID;
+        private System.Windows.Forms.Button btnRefreshArts;
     }
 }
 
