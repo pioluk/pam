@@ -89,15 +89,17 @@ namespace Pam
 
             detectedFaces.RemoveAll((Face face) => { return (face.TimesUnused > 100); });
 
-            if (faceRects == null || faceRects.Length == 0)
-                return;
+            int faceRectCount = (faceRects == null ? 0 : faceRects.Length);
 
-            bool[] rectUsed = new bool[faceRects.Length];
-            ushort[][] miniFaces = new ushort[faceRects.Length][];
+            bool[] rectUsed = null;
+            ushort[][] miniFaces = null;
 
-            for (int ri = 0; ri < faceRects.Length; ++ri)
+            if (faceRectCount > 0)
             {
-                miniFaces[ri] = faceImg(frame, faceRects[ri]);
+                rectUsed = new bool[faceRectCount];
+                miniFaces = new ushort[faceRectCount][];
+                for (int ri = 0; ri < faceRectCount; ++ri)
+                    miniFaces[ri] = faceImg(frame, faceRects[ri]);
             }
 
             foreach (Face face in detectedFaces)
@@ -106,7 +108,7 @@ namespace Pam
                 double bestDist = 2;
                 double bestMSE = 4800;
 
-                for (int ri = 0; ri < faceRects.Length; ++ri)
+                for (int ri = 0; ri < faceRectCount; ++ri)
                 {
                     Rectangle faceRect = faceRects[ri];
                     ushort[] miniFace = miniFaces[ri];
@@ -155,7 +157,7 @@ namespace Pam
                 }
             }
 
-            for (int ri = 0; ri < faceRects.Length; ++ri)
+            for (int ri = 0; ri < faceRectCount; ++ri)
             {
                 if (rectUsed[ri])
                     continue;
