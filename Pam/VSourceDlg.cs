@@ -64,6 +64,7 @@ namespace Pam
                   " *.mkv; *.mov; *.mp2; *.mp2v; *.mp4; *.mp4v; *.mpa; *.mpe; *.mpeg; *.mpeg1; *.mpeg2; *.mpeg4; *.mpg; *.mpv2; *.mts; *.nsv; *.nuv; *.ogg; *.ogm; *.ogv; *.ogx; *.ps; *.rec; *.rm; *.rmvb; *.tod; *.ts; *.tts; *.vob; *.vro; *.webm";
 
             dlgOpenFile.Filter = formats;
+
             if (dlgOpenFile.ShowDialog() == DialogResult.OK)
             {
                 
