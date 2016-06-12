@@ -101,9 +101,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="FunnyGlassesArtifact.cs" />
+    <Compile Include="HatArtifact.cs" />
     <Compile Include="HelmetArtifact.cs" />
     <Compile Include="Face.cs" />
     <Compile Include="FacesBase.cs" />
+    <Compile Include="Moustache2Artifact.cs" />
+    <Compile Include="Moustache3Artifact.cs" />
     <Compile Include="MoustacheArtifact.cs" />
     <Compile Include="RectFilter.cs" />
     <Compile Include="RectUtils.cs" />

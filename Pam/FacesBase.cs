@@ -15,7 +15,11 @@ namespace Pam
             new SombreroArtifact(),
             new SunglassesArtifact(),
             new MoustacheArtifact(),
-            new HelmetArtifact()
+            new HelmetArtifact(),
+            new Moustache2Artifact(),
+            new Moustache3Artifact(),
+            new FunnyGlassesArtifact(),
+            new HatArtifact(),
         };
 
         private Random rng = new Random();
