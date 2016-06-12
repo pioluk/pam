@@ -261,7 +261,7 @@ namespace Pam
                     if(dist < 0.1)
                     {
                         double mse = MeanSquareError(a.Mini, b.Mini);
-                        if(mse < 1600)
+                        if(mse < 100)
                         {
                             if (a.Age < b.Age)
                             {
