@@ -308,10 +308,16 @@ namespace Pam
             List<Face> toRemove = new List<Face>();
             for(int i = 0; i < detectedFaces.Count; ++i)
             {
+                Face a = detectedFaces[i];
+                if (a.TimesUnused > 20)
+                    continue;
+
                 for(int j = i + 1; j < detectedFaces.Count; ++j)
                 {
-                    Face a = detectedFaces[i];
                     Face b = detectedFaces[j];
+                    if (b.TimesUnused > 20)
+                        continue;
+
                     double dist = distanceFactor(a, b.RectFilter.Rectangle);
                     if(dist < 0.1)
                     {
