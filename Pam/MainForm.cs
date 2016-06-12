@@ -45,6 +45,7 @@ namespace Pam
 
         private void AtDispose2()
         {
+            //nat.Dispose();
             facesBase.Dispose();
         }
 
@@ -88,11 +89,17 @@ namespace Pam
         {
             playing = false;
             if (!IsDisposed)
-                Invoke((Proc)delegate
+            {
+                try
                 {
-                    btnStartStop.Text = "Start";
-                    videoPlayer.VideoSource = null;
-                });
+                    Invoke((Proc)delegate
+                    {
+                        btnStartStop.Text = "Start";
+                        videoPlayer.VideoSource = null;
+                    });
+                }
+                catch(Exception) { }
+            }
         }
 
         private void checkMirror_CheckedChanged(object sender, EventArgs e)
@@ -114,13 +121,12 @@ namespace Pam
             {
                 Rectangle[] faces = DetectFaces(frame);
                 facesBase.UpdateFacesInfo(frame, faces);
+                using (Graphics g = Graphics.FromImage(frame))
+                {
+                    facesBase.DrawArtifacts(g);
+                }
             }
             catch (Exception) { }
-
-            using (Graphics g = Graphics.FromImage(frame))
-            {
-                facesBase.DrawArtifacts(g);
-            }
 
             if (mirror)
             {
