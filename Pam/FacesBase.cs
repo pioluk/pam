@@ -258,7 +258,7 @@ namespace Pam
                     Face a = detectedFaces[i];
                     Face b = detectedFaces[j];
                     double dist = distanceFactor(a, b.RectFilter.Rectangle);
-                    if(dist < 1)
+                    if(dist < 0.1)
                     {
                         double mse = MeanSquareError(a.Mini, b.Mini);
                         if(mse < 1600)
