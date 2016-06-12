@@ -87,19 +87,29 @@ namespace Pam
 
             mergeDuplicatedFaces();
 
-            detectedFaces.Sort((Face a, Face b) => { return a.TimesUnused - b.TimesUnused; });
+            detectedFaces.Sort((Face a, Face b) =>
+            {
+                int p = a.TimesUnused - b.TimesUnused;
+                if (p == 0)
+                    p = a.TimesUndetected - b.TimesUndetected;
+                if (p == 0)
+                    p = b.Age - a.Age;
+                return p;
+            });
 
             detectedFaces.RemoveAll((Face face) => { return (face.TimesUnused > 100); });
 
-            if (faceRects == null || faceRects.Length == 0)
-                return;
+            int faceRectCount = (faceRects == null ? 0 : faceRects.Length);
 
-            bool[] rectUsed = new bool[faceRects.Length];
-            ushort[][] miniFaces = new ushort[faceRects.Length][];
+            bool[] rectUsed = null;
+            ushort[][] miniFaces = null;
 
-            for (int ri = 0; ri < faceRects.Length; ++ri)
+            if (faceRectCount > 0)
             {
-                miniFaces[ri] = faceImg(frame, faceRects[ri]);
+                rectUsed = new bool[faceRectCount];
+                miniFaces = new ushort[faceRectCount][];
+                for (int ri = 0; ri < faceRectCount; ++ri)
+                    miniFaces[ri] = faceImg(frame, faceRects[ri]);
             }
 
             foreach (Face face in detectedFaces)
@@ -108,7 +118,7 @@ namespace Pam
                 double bestDist = 2;
                 double bestMSE = 4800;
 
-                for (int ri = 0; ri < faceRects.Length; ++ri)
+                for (int ri = 0; ri < faceRectCount; ++ri)
                 {
                     Rectangle faceRect = faceRects[ri];
                     ushort[] miniFace = miniFaces[ri];
@@ -157,7 +167,7 @@ namespace Pam
                 }
             }
 
-            for (int ri = 0; ri < faceRects.Length; ++ri)
+            for (int ri = 0; ri < faceRectCount; ++ri)
             {
                 if (rectUsed[ri])
                     continue;
@@ -175,7 +185,7 @@ namespace Pam
             Bitmap miniFaceBmp;
             using (Bitmap faceBitmap = frame.Clone(modFaceRect, PixelFormat.Format24bppRgb))
             {
-                miniFaceBmp = new Bitmap(faceBitmap, new Size(16, 16));
+                miniFaceBmp = new Bitmap(faceBitmap, new Size(24, 32));
             }
             using (miniFaceBmp)
             {
@@ -300,10 +310,10 @@ namespace Pam
                     Face a = detectedFaces[i];
                     Face b = detectedFaces[j];
                     double dist = distanceFactor(a, b.RectFilter.Rectangle);
-                    if(dist < 1)
+                    if(dist < 0.1)
                     {
                         double mse = MeanSquareError(a.Mini, b.Mini);
-                        if(mse < 1600)
+                        if(mse < 100)
                         {
                             if (a.Age < b.Age)
                             {
@@ -314,6 +324,11 @@ namespace Pam
                             if(b.TimesUndetected < a.TimesUndetected)
                             {
                                 a.RectFilter.add(b.RectFilter.Rectangle);
+                                a.TimesUndetected = b.TimesUndetected;
+                            }
+                            if(b.TimesUnused < a.TimesUnused)
+                            {
+                                a.TimesUnused = b.TimesUnused;
                             }
                             toRemove.Add(b);
                         }
