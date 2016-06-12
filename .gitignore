@@ -13,6 +13,9 @@
 /Pam/bin/
 /Pam/obj/
 
+/PTst/bin/
+/PTst/obj/
+
 *.user
 *.suo
 *.sdf
