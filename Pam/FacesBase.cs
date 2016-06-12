@@ -114,6 +114,9 @@ namespace Pam
 
             foreach (Face face in detectedFaces)
             {
+                double timeFactor = face.TimesUnused * 0.02;
+                timeFactor *= timeFactor;
+
                 int bestRectIdx = -1;
                 double bestDist = 2;
                 double bestMSE = 4800;
@@ -123,7 +126,7 @@ namespace Pam
                     Rectangle faceRect = faceRects[ri];
                     ushort[] miniFace = miniFaces[ri];
 
-                    double dist = distanceFactor(face, faceRect);
+                    double dist = distanceFactor(face, faceRect) + timeFactor;
                     double mse = MeanSquareError(face.Mini, miniFace);
 
                     factLog.WriteLine("{0} {1}", dist, mse);
