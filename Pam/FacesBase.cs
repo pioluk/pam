@@ -119,7 +119,7 @@ namespace Pam
 
                 int bestRectIdx = -1;
                 double bestDist = 2;
-                double bestMSE = 4800;
+                double bestMSE = 4000;
 
                 for (int ri = 0; ri < faceRectCount; ++ri)
                 {
