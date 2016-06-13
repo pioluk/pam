@@ -16,7 +16,6 @@ namespace Pam
             new SunglassesArtifact(),
             new MoustacheArtifact(),
             new HelmetArtifact(),
-            new HatArtifact(),
             new BearArtifact()
         };
 

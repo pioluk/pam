@@ -102,7 +102,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BearArtifact.cs" />
-    <Compile Include="HatArtifact.cs" />
     <Compile Include="HelmetArtifact.cs" />
     <Compile Include="Face.cs" />
     <Compile Include="FacesBase.cs" />
