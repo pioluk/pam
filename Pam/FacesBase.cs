@@ -114,6 +114,9 @@ namespace Pam
 
             foreach (Face face in detectedFaces)
             {
+                double timeFactor = face.TimesUnused * 0.02;
+                timeFactor *= timeFactor;
+
                 int bestRectIdx = -1;
                 double bestDist = 2;
                 double bestMSE = 4000;
@@ -123,7 +126,7 @@ namespace Pam
                     Rectangle faceRect = faceRects[ri];
                     ushort[] miniFace = miniFaces[ri];
 
-                    double dist = distanceFactor(face, faceRect);
+                    double dist = distanceFactor(face, faceRect) + timeFactor;
                     double mse = MeanSquareError(face.Mini, miniFace);
 
                     factLog.WriteLine("{0} {1}", dist, mse);
@@ -327,10 +330,16 @@ namespace Pam
             List<Face> toRemove = new List<Face>();
             for(int i = 0; i < detectedFaces.Count; ++i)
             {
+                Face a = detectedFaces[i];
+                if (a.TimesUnused > 20)
+                    continue;
+
                 for(int j = i + 1; j < detectedFaces.Count; ++j)
                 {
-                    Face a = detectedFaces[i];
                     Face b = detectedFaces[j];
+                    if (b.TimesUnused > 20)
+                        continue;
+
                     double dist = distanceFactor(a, b.RectFilter.Rectangle);
                     if(dist < 0.1)
                     {
