@@ -18,7 +18,8 @@
 *.sdf
 *.aps
 *.ncb
-*.opendb
+*.VC.db
+*.VC.opendb
 *.opensdf
 *.cachefile
 *.psess

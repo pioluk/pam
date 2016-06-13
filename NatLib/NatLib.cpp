@@ -6,6 +6,9 @@
 
 array<System::Drawing::Rectangle>^ NatLib::Nat::detectFaces(void* imgRGB, int w, int h, int stride)
 {
+	if (!natNat)
+		return nullptr;
+
 	std::vector<cv::Rect> f1 = natNat->detectFaces(imgRGB, w, h, stride);
 	array<System::Drawing::Rectangle>^ f2 = gcnew array<System::Drawing::Rectangle>(f1.size());
 	for (size_t i = 0; i < f1.size(); ++i)
