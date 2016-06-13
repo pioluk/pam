@@ -210,8 +210,7 @@ namespace Pam
             }
             int index = 0;
             int r = rng.Next(minCnt);
-            int j = 0;
-            for(int i = 0; i < artifactUseCounts.Length; ++i)
+            for(int i = 0, j = 0; i < artifactUseCounts.Length; ++i)
             {
                 if (min != artifactUseCounts[i])
                     continue;

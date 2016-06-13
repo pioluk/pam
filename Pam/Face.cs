@@ -1,7 +1,4 @@
-﻿using System;
-using System.Drawing;
-
-namespace Pam
+﻿namespace Pam
 {
     internal class Face
     {
