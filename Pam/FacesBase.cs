@@ -97,7 +97,7 @@ namespace Pam
                 return p;
             });
 
-            detectedFaces.RemoveAll((Face face) => { return (face.TimesUnused > 100); });
+            detectedFaces.RemoveAll((Face face) => { return (face.TimesUnused > 1000); });
 
             int faceRectCount = (faceRects == null ? 0 : faceRects.Length);
 
@@ -116,7 +116,7 @@ namespace Pam
             {
                 int bestRectIdx = -1;
                 double bestDist = 2;
-                double bestMSE = 10000;
+                double bestMSE = 800;
 
                 for (int ri = 0; ri < faceRectCount; ++ri)
                 {
@@ -147,7 +147,7 @@ namespace Pam
                 }
 
             }
-
+            /*
             foreach (Face face in detectedFaces)
             {
                 if (face.InUse)
@@ -166,7 +166,7 @@ namespace Pam
                     face.Mini = img;
                 }
             }
-
+            */
             for (int ri = 0; ri < faceRectCount; ++ri)
             {
                 if (rectUsed[ri])
