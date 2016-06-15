@@ -20,6 +20,7 @@ namespace Pam
             new Moustache3Artifact(),
             new FunnyGlassesArtifact(),
             new HatArtifact(),
+            new BearArtifact(),
         };
 
         private int[] artifactUseCounts = new int[availableArtifacts.Length];
@@ -97,7 +98,7 @@ namespace Pam
                 return p;
             });
 
-            detectedFaces.RemoveAll((Face face) => { return (face.TimesUnused > 100); });
+            detectedFaces.RemoveAll((Face face) => { return (face.TimesUnused > 1000); });
 
             int faceRectCount = (faceRects == null ? 0 : faceRects.Length);
 
@@ -114,16 +115,22 @@ namespace Pam
 
             foreach (Face face in detectedFaces)
             {
+                if (face.TimesUnused > 100)
+                    continue;
+
+                double timeFactor = face.TimesUnused * 0.02;
+                timeFactor *= timeFactor;
+
                 int bestRectIdx = -1;
                 double bestDist = 2;
-                double bestMSE = 4800;
+                double bestMSE = 4000;
 
                 for (int ri = 0; ri < faceRectCount; ++ri)
                 {
                     Rectangle faceRect = faceRects[ri];
                     ushort[] miniFace = miniFaces[ri];
 
-                    double dist = distanceFactor(face, faceRect);
+                    double dist = distanceFactor(face, faceRect) + timeFactor;
                     double mse = MeanSquareError(face.Mini, miniFace);
 
                     factLog.WriteLine("{0} {1}", dist, mse);
@@ -133,6 +140,28 @@ namespace Pam
                         bestDist = dist;
                         bestMSE = mse;
                         bestRectIdx = ri;
+                    }
+                }
+
+                if(bestRectIdx == -1)
+                {
+                    bestMSE = 100;
+
+                    for (int ri = 0; ri < faceRectCount; ++ri)
+                    {
+                        if (rectUsed[ri])
+                            continue;
+
+                        Rectangle faceRect = faceRects[ri];
+                        ushort[] miniFace = miniFaces[ri];
+
+                        double mse = MeanSquareError(face.Mini, miniFace);
+
+                        if (mse < bestMSE)
+                        {
+                            bestMSE = mse;
+                            bestRectIdx = ri;
+                        }
                     }
                 }
 
@@ -304,10 +333,16 @@ namespace Pam
             List<Face> toRemove = new List<Face>();
             for(int i = 0; i < detectedFaces.Count; ++i)
             {
+                Face a = detectedFaces[i];
+                if (a.TimesUnused > 20)
+                    continue;
+
                 for(int j = i + 1; j < detectedFaces.Count; ++j)
                 {
-                    Face a = detectedFaces[i];
                     Face b = detectedFaces[j];
+                    if (b.TimesUnused > 20)
+                        continue;
+
                     double dist = distanceFactor(a, b.RectFilter.Rectangle);
                     if(dist < 0.1)
                     {
