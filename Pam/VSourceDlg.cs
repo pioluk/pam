@@ -60,8 +60,14 @@ namespace Pam
 
         private void btnFile_Click(object sender, EventArgs e)
         {
-            if(dlgOpenFile.ShowDialog() == DialogResult.OK)
+            string formats = "All Videos Files |*.dat; *.wmv; *.3g2; *.3gp; *.3gp2; *.3gpp; *.amv; *.asf;  *.avi; *.bin; *.cue; *.divx; *.dv; *.flv; *.gxf; *.iso; *.m1v; *.m2v; *.m2t; *.m2ts; *.m4v; " +
+                  " *.mkv; *.mov; *.mp2; *.mp2v; *.mp4; *.mp4v; *.mpa; *.mpe; *.mpeg; *.mpeg1; *.mpeg2; *.mpeg4; *.mpg; *.mpv2; *.mts; *.nsv; *.nuv; *.ogg; *.ogm; *.ogv; *.ogx; *.ps; *.rec; *.rm; *.rmvb; *.tod; *.ts; *.tts; *.vob; *.vro; *.webm";
+
+            dlgOpenFile.Filter = formats;
+
+            if (dlgOpenFile.ShowDialog() == DialogResult.OK)
             {
+                
                 videoSource = new FileVideoSource(dlgOpenFile.FileName);
                 DialogResult = DialogResult.OK;
             }

@@ -120,10 +120,13 @@ namespace Pam
             try
             {
                 Rectangle[] faces = DetectFaces(frame);
-                facesBase.UpdateFacesInfo(frame, faces);
-                using (Graphics g = Graphics.FromImage(frame))
+                lock(facesBase)
                 {
-                    facesBase.DrawArtifacts(g);
+                    facesBase.UpdateFacesInfo(frame, faces);
+                    using (Graphics g = Graphics.FromImage(frame))
+                    {
+                        facesBase.DrawArtifacts(g);
+                    }
                 }
             }
             catch (Exception) { }
@@ -157,12 +160,18 @@ namespace Pam
 
         private void btnClearFaces_Click(object sender, EventArgs e)
         {
-            facesBase.Clear();
+            lock(facesBase)
+            {
+                facesBase.Clear();
+            }
         }
 
         private void btnRefreshArts_Click(object sender, EventArgs e)
         {
-            facesBase.refreshArtifacts();
+            lock(facesBase)
+            {
+                facesBase.refreshArtifacts();
+            }
         }
     }
 }
