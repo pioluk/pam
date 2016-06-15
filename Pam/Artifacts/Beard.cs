@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Drawing;
 
-namespace Pam
+namespace Pam.Artifacts
 {
-    class BearArtifact: IArtifact
+    internal class Beard : IArtifact
     {
         private static readonly Bitmap artifact = new Bitmap("broda.png");
 
@@ -18,7 +13,6 @@ namespace Pam
             Point newPosition = new Point(face.X, face.Y + (int)(face.Height -0.38) - (int)(newSize.Height / 1.6));
             g.DrawImage(artifact, new Rectangle(newPosition, newSize));
         }
-
        
     }
 }

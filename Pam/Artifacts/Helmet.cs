@@ -1,9 +1,8 @@
-﻿using System;
-using System.Drawing;
+﻿using System.Drawing;
 
-namespace Pam
+namespace Pam.Artifacts
 {
-    internal class HelmetArtifact : IArtifact
+    internal class Helmet : IArtifact
     {
         private static readonly Bitmap artifact = new Bitmap("helmet.png");
 

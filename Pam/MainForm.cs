@@ -46,7 +46,10 @@ namespace Pam
         private void AtDispose2()
         {
             //nat.Dispose();
-            facesBase.Dispose();
+            lock(facesBase)
+            {
+                facesBase.Dispose();
+            }
         }
 
         private void Stop()
