@@ -20,6 +20,7 @@ namespace Pam
             new Moustache3Artifact(),
             new FunnyGlassesArtifact(),
             new HatArtifact(),
+            new Moustache4Artifact(),
         };
 
         private int[] artifactUseCounts = new int[availableArtifacts.Length];
