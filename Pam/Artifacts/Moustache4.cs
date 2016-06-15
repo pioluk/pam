@@ -2,7 +2,7 @@
 
 namespace Pam.Artifacts
 {
-    internal class Moustache4Artifact : IArtifact
+    internal class Moustache4 : IArtifact
     {
         public void draw(Graphics g, Rectangle face)
         {

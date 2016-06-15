@@ -13,16 +13,16 @@ namespace Pam
 
         private static readonly IArtifact[] availableArtifacts =
         {
-            new SombreroArtifact(),
-            new SunglassesArtifact(),
-            new MoustacheArtifact(),
-            new HelmetArtifact(),
-            new Moustache2Artifact(),
-            new Moustache3Artifact(),
-            new FunnyGlassesArtifact(),
-            new HatArtifact(),
-            new BearArtifact(),
-            new Moustache4Artifact(),
+            new Sombrero(),
+            new Sunglasses(),
+            new Moustache(),
+            new Helmet(),
+            new Moustache2(),
+            new Moustache3(),
+            new FunnyGlasses(),
+            new Hat(),
+            new Beard(),
+            new Moustache4(),
         };
 
         private int[] artifactUseCounts = new int[availableArtifacts.Length];

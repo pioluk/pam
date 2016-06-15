@@ -101,19 +101,19 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Artifacts\BearArtifact.cs" />
-    <Compile Include="Artifacts\FunnyGlassesArtifact.cs" />
-    <Compile Include="Artifacts\HatArtifact.cs" />
-    <Compile Include="Artifacts\HelmetArtifact.cs" />
-    <Compile Include="Artifacts\Moustache4Artifact.cs" />
+    <Compile Include="Artifacts\Beard.cs" />
+    <Compile Include="Artifacts\FunnyGlasses.cs" />
+    <Compile Include="Artifacts\Hat.cs" />
+    <Compile Include="Artifacts\Helmet.cs" />
+    <Compile Include="Artifacts\Moustache4.cs" />
     <Compile Include="Face.cs" />
     <Compile Include="FacesBase.cs" />
-    <Compile Include="Artifacts\Moustache2Artifact.cs" />
-    <Compile Include="Artifacts\Moustache3Artifact.cs" />
-    <Compile Include="Artifacts\MoustacheArtifact.cs" />
+    <Compile Include="Artifacts\Moustache2.cs" />
+    <Compile Include="Artifacts\Moustache3.cs" />
+    <Compile Include="Artifacts\Moustache.cs" />
     <Compile Include="RectFilter.cs" />
     <Compile Include="RectUtils.cs" />
-    <Compile Include="Artifacts\SunglassesArtifact.cs" />
+    <Compile Include="Artifacts\Sunglasses.cs" />
     <Compile Include="IArtifact.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
@@ -123,7 +123,7 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Artifacts\SombreroArtifact.cs" />
+    <Compile Include="Artifacts\Sombrero.cs" />
     <Compile Include="VSourceDlg.cs">
       <SubType>Form</SubType>
     </Compile>

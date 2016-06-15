@@ -2,7 +2,7 @@
 
 namespace Pam.Artifacts
 {
-    internal class BearArtifact : IArtifact
+    internal class Beard : IArtifact
     {
         private static readonly Bitmap artifact = new Bitmap("broda.png");
 
