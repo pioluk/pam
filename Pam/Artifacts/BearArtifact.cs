@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Pam
 {
-    class BearArtifact: IArtifact
+    internal class BearArtifact : IArtifact
     {
         private static readonly Bitmap artifact = new Bitmap("broda.png");
 

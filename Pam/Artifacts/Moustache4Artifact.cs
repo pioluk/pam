@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Pam
 {
-    class Moustache4Artifact : IArtifact
+    internal class Moustache4Artifact : IArtifact
     {
         public void draw(Graphics g, Rectangle face)
         {
