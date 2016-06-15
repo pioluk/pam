@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
+using System.Linq;
 
 namespace Pam
 {
@@ -12,15 +12,16 @@ namespace Pam
 
         private static readonly IArtifact[] availableArtifacts =
         {
-            new SombreroArtifact(),
-            new SunglassesArtifact(),
-            new MoustacheArtifact(),
-            new HelmetArtifact(),
-            new Moustache2Artifact(),
-            new Moustache3Artifact(),
-            new FunnyGlassesArtifact(),
-            new HatArtifact(),
-            new BearArtifact(),
+            new Artifacts.Sombrero(),
+            new Artifacts.Sunglasses(),
+            new Artifacts.Moustache(),
+            new Artifacts.Helmet(),
+            new Artifacts.Moustache2(),
+            new Artifacts.Moustache3(),
+            new Artifacts.FunnyGlasses(),
+            new Artifacts.Hat(),
+            new Artifacts.Beard(),
+            new Artifacts.Moustache4(),
         };
 
         private int[] artifactUseCounts = new int[availableArtifacts.Length];

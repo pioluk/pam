@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Drawing;
+﻿using System.Drawing;
 
-namespace Pam
+namespace Pam.Artifacts
 {
-    internal class Moustache2Artifact : IArtifact
+    internal class Moustache2 : IArtifact
     {
         private static readonly Bitmap artifact = new Bitmap("moustache2.png");
 
