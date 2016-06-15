@@ -4,7 +4,6 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
-using Pam.Artifacts;
 
 namespace Pam
 {
@@ -13,16 +12,16 @@ namespace Pam
 
         private static readonly IArtifact[] availableArtifacts =
         {
-            new Sombrero(),
-            new Sunglasses(),
-            new Moustache(),
-            new Helmet(),
-            new Moustache2(),
-            new Moustache3(),
-            new FunnyGlasses(),
-            new Hat(),
-            new Beard(),
-            new Moustache4(),
+            new Artifacts.Sombrero(),
+            new Artifacts.Sunglasses(),
+            new Artifacts.Moustache(),
+            new Artifacts.Helmet(),
+            new Artifacts.Moustache2(),
+            new Artifacts.Moustache3(),
+            new Artifacts.FunnyGlasses(),
+            new Artifacts.Hat(),
+            new Artifacts.Beard(),
+            new Artifacts.Moustache4(),
         };
 
         private int[] artifactUseCounts = new int[availableArtifacts.Length];
