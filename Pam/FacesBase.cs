@@ -115,6 +115,9 @@ namespace Pam
 
             foreach (Face face in detectedFaces)
             {
+                if (face.TimesUnused > 100)
+                    continue;
+
                 double timeFactor = face.TimesUnused * 0.02;
                 timeFactor *= timeFactor;
 
