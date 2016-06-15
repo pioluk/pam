@@ -105,6 +105,7 @@
     <Compile Include="Artifacts\FunnyGlassesArtifact.cs" />
     <Compile Include="Artifacts\HatArtifact.cs" />
     <Compile Include="Artifacts\HelmetArtifact.cs" />
+    <Compile Include="Artifacts\Moustache4Artifact.cs" />
     <Compile Include="Face.cs" />
     <Compile Include="FacesBase.cs" />
     <Compile Include="Artifacts\Moustache2Artifact.cs" />
