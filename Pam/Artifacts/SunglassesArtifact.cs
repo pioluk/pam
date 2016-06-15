@@ -1,6 +1,6 @@
 ﻿using System.Drawing;
 
-namespace Pam
+namespace Pam.Artifacts
 {
     internal class SunglassesArtifact : IArtifact
     {

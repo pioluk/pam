@@ -1,6 +1,6 @@
 ﻿using System.Drawing;
 
-namespace Pam
+namespace Pam.Artifacts
 {
     internal class BearArtifact : IArtifact
     {
@@ -13,7 +13,6 @@ namespace Pam
             Point newPosition = new Point(face.X, face.Y + (int)(face.Height -0.38) - (int)(newSize.Height / 1.6));
             g.DrawImage(artifact, new Rectangle(newPosition, newSize));
         }
-
        
     }
 }
