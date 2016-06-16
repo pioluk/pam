@@ -47,7 +47,11 @@ namespace Pam.Artifacts
                 x2 = -t;
             }
 
+            int bx1 = -x2;
+            int bx2 = -x1;
+
             g.FillEllipse(Brushes.Aqua, new Rectangle(drawRect.X + xc + x1, drawRect.Y + drawRect.Height / 10, x2 - x1, drawRect.Height / 10));
+            g.FillEllipse(Brushes.Green, new Rectangle(drawRect.X + xc + bx1, drawRect.Y + drawRect.Height / 10, bx2 - bx1, drawRect.Height / 10));
         }
 
         private bool calcPosition(out float pos)
