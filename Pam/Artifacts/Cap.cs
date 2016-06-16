@@ -40,6 +40,13 @@ namespace Pam.Artifacts
             int x1 = (int)((1.0f - apos) * -r0);
             int x2 = (int)(r1 * apos);
 
+            if(pos < 0.0f)
+            {
+                int t = x1;
+                x1 = -x2;
+                x2 = -t;
+            }
+
             g.FillEllipse(Brushes.Aqua, new Rectangle(drawRect.X + xc + x1, drawRect.Y + drawRect.Height / 10, x2 - x1, drawRect.Height / 10));
         }
 
