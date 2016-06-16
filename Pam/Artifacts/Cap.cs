@@ -50,8 +50,12 @@ namespace Pam.Artifacts
             int bx1 = -x2;
             int bx2 = -x1;
 
-            Rectangle aasr = new Rectangle(drawRect.X + xc + x1, drawRect.Y + drawRect.Height / 10, x2 - x1, drawRect.Height / 10);
-            Rectangle basr = new Rectangle(drawRect.X + xc + bx1, drawRect.Y + drawRect.Height / 10, bx2 - bx1, drawRect.Height / 10);
+            Size asSize = new Size(x2 - x1, drawRect.Height / 10);
+            int yy = drawRect.Y + drawRect.Height / 10;
+            Point aasp = new Point(drawRect.X + xc + x1, yy);
+            Point basp = new Point(drawRect.X + xc + bx1, yy);
+            Rectangle aasr = new Rectangle(aasp, asSize);
+            Rectangle basr = new Rectangle(basp, asSize);
 
             if(flip)
                 g.FillEllipse(Brushes.Green, basr);
