@@ -22,6 +22,7 @@ namespace Pam
             new Artifacts.Hat(),
             new Artifacts.Beard(),
             new Artifacts.Moustache4(),
+            new Artifacts.Cap(),
         };
 
         private int[] artifactUseCounts = new int[availableArtifacts.Length];

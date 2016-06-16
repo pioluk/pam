@@ -102,6 +102,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Artifacts\Beard.cs" />
+    <Compile Include="Artifacts\Cap.cs" />
     <Compile Include="Artifacts\FunnyGlasses.cs" />
     <Compile Include="Artifacts\Hat.cs" />
     <Compile Include="Artifacts\Helmet.cs" />
