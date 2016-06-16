@@ -58,10 +58,10 @@ namespace Pam.Artifacts
             Rectangle basr = new Rectangle(basp, asSize);
 
             if(flip)
-                g.FillEllipse(Brushes.Green, basr);
-            g.FillEllipse(Brushes.Aqua, aasr);
+                g.FillEllipse(Brushes.GreenYellow, basr);
+            g.FillEllipse(Brushes.IndianRed, aasr);
             if(!flip)
-                g.FillEllipse(Brushes.Green, basr);
+                g.FillEllipse(Brushes.GreenYellow, basr);
         }
 
         private bool calcPosition(out float pos)
